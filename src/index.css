@@ -1,0 +1,254 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ── Variáveis CSS (shadcn pattern) ─────────────────────────── */
+:root {
+  --radius: 0.75rem;
+
+  /* Tema Mirante Teal — Light */
+  --background:           #f5f5f0;
+  --foreground:           #1a1a2e;
+  --card:                 #ffffff;
+  --card-foreground:      #1a1a2e;
+  --popover:              #ffffff;
+  --popover-foreground:   #1a1a2e;
+  --primary:              #006064;
+  --primary-foreground:   #ffffff;
+  --secondary:            #e0f7fa;
+  --secondary-foreground: #006064;
+  --muted:                #f3f4f6;
+  --muted-foreground:     #6b7280;
+  --accent:               #e0f7fa;
+  --accent-foreground:    #006064;
+  --destructive:          #ef4444;
+  --border:               #e5e7eb;
+  --input:                #e5e7eb;
+  --ring:                 #00838f;
+}
+
+/* ── Dark Mode ───────────────────────────────────────────────── */
+html.dark {
+  --background:           #0f1117;
+  --foreground:           #e8eaf0;
+  --card:                 #1a1d27;
+  --card-foreground:      #e8eaf0;
+  --popover:              #1a1d27;
+  --popover-foreground:   #e8eaf0;
+  --primary:              #00bcd4;
+  --primary-foreground:   #0f1117;
+  --secondary:            #0e3340;
+  --secondary-foreground: #00bcd4;
+  --muted:                #252836;
+  --muted-foreground:     #9ca3af;
+  --accent:               #0e3340;
+  --accent-foreground:    #00bcd4;
+  --destructive:          #f87171;
+  --border:               #2d3148;
+  --input:                #2d3148;
+  --ring:                 #00bcd4;
+}
+
+/* ── Mapeamento Tailwind v4 ──────────────────────────────────── */
+@theme inline {
+  --radius-sm:  calc(var(--radius) - 4px);
+  --radius-md:  calc(var(--radius) - 2px);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:          var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
+
+  /* Cores diretas Mirante (mantidas para compatibilidade) */
+  --color-mirante-teal:      #006064;
+  --color-mirante-teal-dark: #004d51;
+  --color-mirante-teal-mid:  #00838f;
+  --color-mirante-card:      #f5f5f0;
+  --color-mirante-text:      #1a1a2e;
+  --color-mirante-gray:      #6b7280;
+  --color-mirante-novo:      #e53935;
+  --color-primary-50:        #e0f7fa;
+  --color-primary-100:       #b2ebf2;
+
+  /* Fonte */
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Sombras */
+  --shadow-card:       0 4px 24px rgba(0, 0, 0, 0.12);
+  --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.22);
+  --shadow-nav:        0 2px 16px rgba(0, 96, 100, 0.4);
+  --shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.05);
+
+  /* Keyframes e Animações */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-badge {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50%       { transform: scale(1.05) rotate(1deg); }
+  }
+  @keyframes spin-in {
+    from { transform: rotate(-90deg) scale(0.5); opacity: 0; }
+    to   { transform: rotate(0deg) scale(1); opacity: 1; }
+  }
+  @keyframes spin-out {
+    from { transform: rotate(0deg) scale(1); opacity: 1; }
+    to   { transform: rotate(90deg) scale(0.5); opacity: 0; }
+  }
+  @keyframes theme-pill-on {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+  }
+
+  --animate-fade-in-up:   fadeInUp 0.4s ease-out forwards;
+  --animate-pulse-badge:  pulse-badge 2s ease-in-out infinite;
+  --animate-spin-in:      spin-in 0.3s ease-out forwards;
+}
+
+/* ── Base ────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    @apply border-border;
+  }
+  body {
+    min-height: 100vh;
+    background-color: var(--background);
+    font-family: var(--font-sans);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.2s ease;
+  }
+}
+
+/* ── Componentes ─────────────────────────────────────────────── */
+@layer components {
+  .card-dashboard {
+    @apply relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300
+           hover:scale-[1.03] hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .card-dashboard::after {
+    content: "";
+    @apply absolute inset-0 opacity-0 bg-white/10 transition-opacity duration-300;
+  }
+
+  .card-dashboard:hover::after {
+    @apply opacity-100;
+  }
+
+  .nav-dropdown-menu {
+    @apply absolute top-full left-0 mt-1 bg-card rounded-xl shadow-xl border border-border
+           overflow-hidden z-50 min-w-[180px] py-1;
+  }
+
+  .nav-dropdown-item {
+    @apply px-4 py-2.5 text-foreground text-sm hover:bg-secondary hover:text-primary
+           transition-colors duration-150 cursor-pointer block w-full text-left font-medium;
+  }
+
+  .search-input {
+    @apply bg-white/15 border border-white/30 rounded-full px-4 py-2 text-sm text-white
+           placeholder-white/60 outline-none focus:bg-white/25 focus:border-white/60
+           transition-all duration-200 w-44 focus:w-52;
+  }
+
+  .badge-novo {
+    @apply animate-pulse-badge;
+  }
+
+  /* ── Theme Toggle ─────────────────────────────────────────── */
+  .theme-toggle {
+    @apply relative flex items-center gap-1.5 rounded-full px-2.5 py-1.5
+           bg-white/10 border border-white/25 cursor-pointer select-none
+           hover:bg-white/20 transition-all duration-200;
+  }
+
+  .theme-toggle-track {
+    @apply relative w-10 h-5 rounded-full transition-all duration-300;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+
+  .theme-toggle-thumb {
+    @apply absolute top-[2px] left-[2px] w-4 h-4 rounded-full flex items-center justify-center
+           transition-all duration-300 ease-in-out;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  .theme-toggle-thumb.dark-mode {
+    transform: translateX(20px);
+    background: #1a1a2e;
+  }
+
+  .theme-icon {
+    @apply transition-all duration-300;
+  }
+}
+
+/* ── Utilitários ─────────────────────────────────────────────── */
+@utility btn-pill {
+  @apply px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer select-none;
+}
+
+@utility btn-pill-outline {
+  @apply btn-pill border border-white/40 text-white hover:bg-white/15 active:bg-white/25;
+}
+
+@utility btn-pill-solid {
+  @apply btn-pill bg-white text-mirante-teal font-semibold hover:bg-white/90 active:scale-95;
+}
+
+@utility text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+@utility text-shadow-sm {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Card delays ─────────────────────────────────────────────── */
+.card-delay-1  { animation-delay: 0.05s; }
+.card-delay-2  { animation-delay: 0.10s; }
+.card-delay-3  { animation-delay: 0.15s; }
+.card-delay-4  { animation-delay: 0.20s; }
+.card-delay-5  { animation-delay: 0.25s; }
+.card-delay-6  { animation-delay: 0.30s; }
+.card-delay-7  { animation-delay: 0.35s; }
+.card-delay-8  { animation-delay: 0.40s; }
+.card-delay-9  { animation-delay: 0.45s; }
+.card-delay-10 { animation-delay: 0.50s; }
+.card-delay-11 { animation-delay: 0.55s; }
+.card-delay-12 { animation-delay: 0.60s; }
+.card-delay-13 { animation-delay: 0.65s; }
+.card-delay-14 { animation-delay: 0.70s; }
+.card-delay-15 { animation-delay: 0.75s; }
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--ring); }
