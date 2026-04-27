@@ -5,3 +5,5 @@ export * from "./users";
 export * from "./sectors";
 export * from "./stats";
 export * from "./notifications";
+export * from "./chat";
+export * from "./agentMetadata";

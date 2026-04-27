@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ThemeToggle from "@/components/ThemeToggle";
+import FloatingChatWidget from "@/components/FloatingChatWidget";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -682,6 +683,13 @@ export default function DashboardDetailPage() {
           )}
         </div>
       </div>
+
+      <FloatingChatWidget
+        dashboardId={id}
+        dashboard={dashboard}
+        sectorName={sectorName}
+        pbiStatus={pbiStatus}
+      />
     </div>
   );
 }
