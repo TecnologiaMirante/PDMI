@@ -4,8 +4,8 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import Anthropic from "@anthropic-ai/sdk";
-import { buildSystemPrompt } from "../api/_buildPrompt.js";
-import { getPBIToken, getDataSnapshot, formatSnapshot } from "../api/_powerbi.js";
+import { buildSystemPrompt } from "./_buildPrompt.js";
+import { getPBIToken, getDataSnapshot, formatSnapshot } from "./_powerbi.js";
 
 // Carrega .env da raiz em dev local (Render injeta env vars diretamente em produção)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
