@@ -64,21 +64,64 @@ export function usePowerBIStatuses(dashboards) {
           const datasetId = datasetsByName[dash.titulo];
 
           if (!datasetId) {
-            setStatusMap((prev) => ({ ...prev, [dash.titulo]: { status: null, lastRefresh: null } }));
+            setStatusMap((prev) => ({
+              ...prev,
+              [dash.titulo]: { status: null, lastRefresh: null },
+            }));
             return;
           }
 
           try {
             const [refreshData, scheduleData] = await Promise.all([
               getDatasetRefreshStatus(token, datasetId),
-              getDatasetRefreshSchedule(token, datasetId).catch(() => ({ nextRefresh: null })),
+              getDatasetRefreshSchedule(token, datasetId).catch(() => ({
+                nextRefresh: null,
+              })),
             ]);
+
+            // Ajustar status baseado nas regras
+            let adjustedStatus = refreshData.status;
+            const { status, lastRefresh } = refreshData;
+            const { nextRefresh } = scheduleData;
+
+            if (status === "updated" && lastRefresh) {
+              // Último refresh foi "Completed" (já que status=updated na função)
+              const isRecent =
+                Date.now() - new Date(lastRefresh).getTime() <
+                24 * 60 * 60 * 1000;
+
+              if (nextRefresh === null) {
+                // Não tem schedule: sempre updated
+                adjustedStatus = "updated";
+              } else {
+                // Tem schedule: updated se recent, outdated se não
+                adjustedStatus = isRecent ? "updated" : "outdated";
+              }
+            } else if (status === "outdated" && lastRefresh) {
+              // Último refresh falhou: manter lógica de recência
+              const isRecent =
+                Date.now() - new Date(lastRefresh).getTime() <
+                24 * 60 * 60 * 1000;
+              adjustedStatus = isRecent ? "updated" : "outdated";
+            }
+
             setStatusMap((prev) => ({
               ...prev,
-              [dash.titulo]: { ...refreshData, nextRefresh: scheduleData.nextRefresh },
+              [dash.titulo]: {
+                status: adjustedStatus,
+                lastRefresh,
+                nextRefresh,
+              },
             }));
           } catch (err) {
-            setStatusMap((prev) => ({ ...prev, [dash.titulo]: { status: "error", lastRefresh: null, nextRefresh: null } }));
+            setStatusMap((prev) => ({
+              ...prev,
+              [dash.titulo]: {
+                status: "error",
+                lastRefresh: null,
+                nextRefresh: null,
+              },
+            }));
           }
         }),
       );

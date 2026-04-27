@@ -5,9 +5,9 @@ const PASSWORD = import.meta.env.VITE_PBI_PASSWORD;
 const CLIENT_SECRET = import.meta.env.VITE_PBI_CLIENT_SECRET;
 const PBI_API = "https://api.powerbi.com/v1.0/myorg";
 
-const DATASETS_TTL  = 5 * 60 * 1000;   // 5 min — lista de datasets muda raramente
-const REFRESH_TTL   = 3 * 60 * 1000;   // 3 min — status de refresh
-const SCHEDULE_TTL  = 10 * 60 * 1000;  // 10 min — schedule muda muito raramente
+const DATASETS_TTL = 5 * 60 * 1000; // 5 min — lista de datasets muda raramente
+const REFRESH_TTL = 3 * 60 * 1000; // 3 min — status de refresh
+const SCHEDULE_TTL = 10 * 60 * 1000; // 10 min — schedule muda muito raramente
 
 // ── Cache do token ────────────────────────────────────────────
 let _token = null;
@@ -20,8 +20,8 @@ let _datasetsExpiry = 0;
 let _datasetsInflight = null;
 
 // ── Cache de refresh por datasetId ────────────────────────────
-const _refreshCache = new Map();   // datasetId → { data, expiry }
-const _scheduleCache = new Map();  // datasetId → { data, expiry }
+const _refreshCache = new Map(); // datasetId → { data, expiry }
+const _scheduleCache = new Map(); // datasetId → { data, expiry }
 
 export async function getPowerBIToken() {
   if (_token && Date.now() < _tokenExpiry) return _token;
@@ -77,15 +77,17 @@ export async function getAllDatasets(accessToken) {
       const { value: groups = [] } = await groupsRes.json();
       await Promise.allSettled(
         groups.map(async (g) => {
-          const r = await fetch(`${PBI_API}/groups/${g.id}/datasets`, { headers });
+          const r = await fetch(`${PBI_API}/groups/${g.id}/datasets`, {
+            headers,
+          });
           if (!r.ok) return;
           const { value = [] } = await r.json();
           for (const ds of value) if (ds.name && ds.id) map[ds.name] = ds.id;
-        })
+        }),
       );
     }
 
-    _datasetsCache  = map;
+    _datasetsCache = map;
     _datasetsExpiry = Date.now() + DATASETS_TTL;
     _datasetsInflight = null;
     return map;
@@ -103,19 +105,23 @@ export async function getDatasetRefreshStatus(accessToken, datasetId) {
   const cached = _refreshCache.get(datasetId);
   if (cached && Date.now() < cached.expiry) return cached.data;
 
-  const res = await fetch(
-    `${PBI_API}/datasets/${datasetId}/refreshes?$top=1`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
+  const res = await fetch(`${PBI_API}/datasets/${datasetId}/refreshes?$top=1`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!res.ok) throw new Error(`Erro refresh API: ${res.status}`);
 
   const { value: refreshes = [] } = await res.json();
-  const status = refreshes.length === 0
-    ? "unknown"
-    : refreshes[0].status === "Completed" ? "updated" : "outdated";
-    
-  const lastRefresh = refreshes.length > 0 && refreshes[0].endTime ? refreshes[0].endTime : null;
+  const lastRefresh =
+    refreshes.length > 0 && refreshes[0].endTime ? refreshes[0].endTime : null;
+
+  let status;
+  if (refreshes.length === 0) {
+    status = "unknown";
+  } else {
+    status = refreshes[0].status === "Completed" ? "updated" : "outdated";
+  }
+
   const data = { status, lastRefresh };
 
   _refreshCache.set(datasetId, { data, expiry: Date.now() + REFRESH_TTL });
@@ -123,7 +129,15 @@ export async function getDatasetRefreshStatus(accessToken, datasetId) {
 }
 
 // Mapa de dias em inglês → índice JS (0 = domingo)
-const DAY_INDEX = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+const DAY_INDEX = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
 
 /**
  * Calcula o próximo horário agendado de refresh de um dataset.
@@ -133,10 +147,9 @@ export async function getDatasetRefreshSchedule(accessToken, datasetId) {
   const cached = _scheduleCache.get(datasetId);
   if (cached && Date.now() < cached.expiry) return cached.data;
 
-  const res = await fetch(
-    `${PBI_API}/datasets/${datasetId}/refreshSchedule`,
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
+  const res = await fetch(`${PBI_API}/datasets/${datasetId}/refreshSchedule`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!res.ok) {
     const data = { nextRefresh: null };
@@ -150,15 +163,21 @@ export async function getDatasetRefreshSchedule(accessToken, datasetId) {
   if (schedule.enabled && schedule.days?.length && schedule.times?.length) {
     const tz = schedule.localTimeZoneId || "UTC";
     // Data/hora atual no timezone do dataset
-    const nowInTz = new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
+    const nowInTz = new Date(
+      new Date().toLocaleString("en-US", { timeZone: tz }),
+    );
     const todayIdx = nowInTz.getDay();
     const currentMinutes = nowInTz.getHours() * 60 + nowInTz.getMinutes();
 
-    const scheduledDayIdxs = schedule.days.map((d) => DAY_INDEX[d]).filter((d) => d !== undefined);
-    const scheduledMinutes = schedule.times.map((t) => {
-      const [h, m] = t.split(":").map(Number);
-      return h * 60 + m;
-    }).sort((a, b) => a - b);
+    const scheduledDayIdxs = schedule.days
+      .map((d) => DAY_INDEX[d])
+      .filter((d) => d !== undefined);
+    const scheduledMinutes = schedule.times
+      .map((t) => {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+      })
+      .sort((a, b) => a - b);
 
     // Itera os próximos 7 dias para encontrar o próximo slot
     for (let offset = 0; offset < 7; offset++) {
