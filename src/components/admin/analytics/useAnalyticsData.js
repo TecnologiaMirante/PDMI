@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from "react";
 import { getAllUserStats } from "@infra/firebase";
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export function useAnalyticsData(dashboards, users) {
   const [allStats, setAllStats] = useState([]);
@@ -390,7 +390,10 @@ export function useAnalyticsData(dashboards, users) {
         dashCount: Object.keys(s.dashboards || {}).length,
         lastAccess: s.platform?.lastAccess,
       }))
-      .sort((a, b) => b.accessCount - a.accessCount)
+      .sort(
+        (a, b) =>
+          b.accessCount - a.accessCount || b.totalSeconds - a.totalSeconds,
+      )
       .slice(0, 8);
   }, [filteredStats, userMap]);
 
@@ -547,31 +550,50 @@ export function useAnalyticsData(dashboards, users) {
       : "Sem dados no período selecionado";
   }, [noExportData, selectedDashboards]);
 
-  
   return {
     loading,
     allStats,
-    dateFilter, setDateFilter,
-    customDate, setCustomDate,
-    customRange, setCustomRange,
-    selectedDashboards, setSelectedDashboards,
-    showNeverAccessed, setShowNeverAccessed,
-    showInactiveAlert, setShowInactiveAlert,
-    showActiveUsers, setShowActiveUsers,
-    showInactiveUsers, setShowInactiveUsers,
-    exporting, setExporting,
-    exportingCSV, setExportingCSV,
+    dateFilter,
+    setDateFilter,
+    customDate,
+    setCustomDate,
+    customRange,
+    setCustomRange,
+    selectedDashboards,
+    setSelectedDashboards,
+    showNeverAccessed,
+    setShowNeverAccessed,
+    showInactiveAlert,
+    setShowInactiveAlert,
+    showActiveUsers,
+    setShowActiveUsers,
+    showInactiveUsers,
+    setShowInactiveUsers,
+    exporting,
+    setExporting,
+    exportingCSV,
+    setExportingCSV,
     handleDateFilterChange,
-    minDate, maxDate, periodLabel,
+    minDate,
+    maxDate,
+    periodLabel,
     filteredStats,
-    isFilteringByDash, selectedDashboardSet,
+    isFilteringByDash,
+    selectedDashboardSet,
     hasLegacyDataInFilter,
     platformTotals,
-    topDashboards, topUsers, topDashboardsByTime,
-    neverAccessedDashboards, inactiveUsersList,
+    topDashboards,
+    topUsers,
+    topDashboardsByTime,
+    neverAccessedDashboards,
+    inactiveUsersList,
     dashboardCoverage,
     dailyChartData,
-    noExportData, noExportDataTitle,
-    showAlertsSection, maxDashAccess, maxDashTime, maxUserAccess
+    noExportData,
+    noExportDataTitle,
+    showAlertsSection,
+    maxDashAccess,
+    maxDashTime,
+    maxUserAccess,
   };
 }
