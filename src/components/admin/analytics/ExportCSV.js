@@ -1,4 +1,4 @@
-import { fmtAdminTime } from '../adminUtils';
+import { fmtAdminTime } from "../adminUtils";
 
 export function exportAnalyticsCSV({
   periodLabel,

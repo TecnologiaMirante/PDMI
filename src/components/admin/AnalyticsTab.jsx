@@ -17,6 +17,7 @@ import {
   Percent,
   Timer,
   Activity,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -697,6 +698,23 @@ export default function AnalyticsTab({ dashboards, users }) {
               <h3 className="font-bold text-foreground">
                 Usuários mais ativos
               </h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Explicar ordenação de usuários ativos"
+                  >
+                    <Info className="size-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-3">
+                  <p className="text-sm">
+                    Ordenado por número de acessos. Tempo total só é usado como
+                    critério de desempate.
+                  </p>
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="p-4 space-y-3">
               {topUsers.length === 0 ? (
