@@ -11,7 +11,4 @@ export default defineConfig({
       "@infra/firebase": path.resolve(__dirname, "./firebaseClient"),
     },
   },
-  optimizeDeps: {
-    include: ["react-markdown", "remark-gfm"],
-  },
 });
