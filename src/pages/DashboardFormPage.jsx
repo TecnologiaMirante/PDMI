@@ -198,7 +198,7 @@ export default function DashboardFormPage() {
         descricao: values.descricao || "",
         sectorId: resolvedSectorId,
         link: values.link || "",
-        thumb: thumbPreview,
+        thumb: thumb,
         users_acess: selectedUsers,
         isVisible: values.isVisible,
       };
@@ -212,7 +212,7 @@ export default function DashboardFormPage() {
           if (values.titulo !== orig.titulo) changes.push("título");
           if ((values.descricao || "") !== orig.descricao) changes.push("descrição");
           if (values.link !== orig.link) changes.push("link do relatório");
-          if (thumbPreview !== orig.thumb) changes.push("imagem de capa");
+          if (thumb !== orig.thumb) changes.push("imagem de capa");
           if (resolvedSectorId !== orig.sectorId) changes.push("setor");
           if (values.isVisible !== orig.isVisible)
             changes.push(`visibilidade (agora ${values.isVisible ? "visível" : "oculto"})`);

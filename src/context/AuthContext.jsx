@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@infra/firebase";
-import { getUserProfile } from "@infra/firebase";
+import { getUserProfile, createUser } from "@infra/firebase";
 
 const AuthContext = createContext(null);
 
@@ -34,10 +34,21 @@ export function AuthProvider({ children }) {
         setUser(baseUser);
 
         try {
-          const profile = await getUserProfile(firebaseUser.uid);
+          let profile = await getUserProfile(firebaseUser.uid);
+          if (!profile) {
+            await createUser(firebaseUser.uid, {
+              uid: firebaseUser.uid,
+              display_name: firebaseUser.displayName || "",
+              email: firebaseUser.email || "",
+              photo_url: firebaseUser.photoURL || "",
+              typeUser: "user",
+              created_time: new Date(),
+            });
+            profile = await getUserProfile(firebaseUser.uid);
+          }
           setUserProfile(profile);
         } catch (e) {
-          console.error("Erro ao buscar perfil:", e);
+          console.error("Erro ao buscar/criar perfil:", e);
           setUserProfile(null);
         }
       } else {

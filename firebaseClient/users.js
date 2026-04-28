@@ -3,11 +3,17 @@ import {
   doc,
   getDocs,
   getDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
 import { deleteUser } from "firebase/auth";
 import { db, auth } from "./config";
+
+export async function createUser(uid, data) {
+  const ref = doc(db, "users", uid);
+  await setDoc(ref, data, { merge: true });
+}
 
 /**
  * Busca todos os usuários da coleção "users" ordenados alfabeticamente por nome.
@@ -34,10 +40,11 @@ export async function getUserProfile(uid) {
 
 /**
  * Atualiza campos do documento do usuário na coleção "users".
+ * Usa setDoc com merge para funcionar mesmo se o documento não existir.
  */
 export async function updateUser(uid, data) {
   const ref = doc(db, "users", uid);
-  await updateDoc(ref, data);
+  await setDoc(ref, data, { merge: true });
 }
 
 /**
