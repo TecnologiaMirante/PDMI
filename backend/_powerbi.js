@@ -192,6 +192,9 @@ function autoDetectRelationships(tableColMap) {
 
 // ── Snapshot de dados reais ───────────────────────────────────────────────────
 
+// Tabelas ignoradas no snapshot (sem valor analítico direto)
+const SKIP_SNAPSHOT_TABLES = new Set(["Medidas"]);
+
 export async function getDataSnapshot(token, datasetId, workspaceId, knownTables = [], modelSchema = {}) {
   const base = workspaceId
     ? `${PBI_API}/groups/${workspaceId}/datasets/${datasetId}`
@@ -202,103 +205,82 @@ export async function getDataSnapshot(token, datasetId, workspaceId, knownTables
     "Content-Type": "application/json",
   };
 
-  const measures       = modelSchema.measures       ?? [];
-  const columnsByTable = modelSchema.columnsByTable ?? {};
-  let   relationships  = modelSchema.relationships  ?? [];
+  const measures      = modelSchema.measures      ?? [];
+  const relationships = modelSchema.relationships ?? [];
 
-  const tableNames = knownTables.filter(Boolean);
+  const tableNames = knownTables.filter((t) => t && !SKIP_SNAPSHOT_TABLES.has(t));
   if (!tableNames.length) return null;
 
-  // 1. Descobre colunas de cada tabela
-  const tableColMap = {};
-  for (const tableName of tableNames) {
-    const knownCols = columnsByTable[tableName] ?? [];
-    const cols = await discoverColumns(base, headers, tableName, knownCols);
-    tableColMap[tableName] = cols;
-    console.log(`[snapshot] "${tableName}": ${cols.textCols.length} texto, ${cols.numCols.length} numérico`);
-  }
-
-  // 2. Se não há relacionamentos do schema, tenta auto-detectar
-  if (!relationships.length) {
-    relationships = autoDetectRelationships(tableColMap);
-  }
-
-  // 3. Snapshot por tabela — TOPN aumentado para cobrir todos os dados relevantes
   const tableSnapshots = [];
-  for (const tableName of tableNames) {
-    const { textCols, numCols } = tableColMap[tableName] ?? { textCols: [], numCols: [] };
-
-    let rows = null;
-
-    if (textCols.length > 0) {
-      const dims = textCols.slice(0, 5).map((c) => `'${tableName}'[${c}]`).join(", ");
-      const sums = numCols.slice(0, 15).map((c) => `"${c}", SUM('${tableName}'[${c}])`).join(", ");
-      rows = await runDAX(
-        base, headers,
-        `EVALUATE
-         TOPN(500,
-           SUMMARIZECOLUMNS(
-             ${dims}${sums ? ", " + sums : ""},
-             "Registros", COUNTROWS('${tableName}')
-           ),
-           [Registros], DESC
-         )`
-      );
-    } else if (numCols.length) {
-      const sums = numCols.slice(0, 15).map((c) => `"${c}", SUM('${tableName}'[${c}])`).join(", ");
-      rows = await runDAX(base, headers, `EVALUATE ROW(${sums}, "Total", COUNTROWS('${tableName}'))`);
-    }
-
-    if (rows?.length) {
-      tableSnapshots.push({
-        table: tableName,
-        rows: cleanRows(rows),
-        aggregated: textCols.length > 0,
-      });
-      console.log(`[snapshot] "${tableName}": ${rows.length} linhas de dados`);
-    } else {
-      console.log(`[snapshot] "${tableName}": sem dados`);
-    }
-  }
-
-  // 4. Análise cruzada dim × fact — TOPN aumentado para cobertura real
   const crossSnapshots = [];
-  const factToDims = {};
-  for (const rel of relationships) {
-    if (!factToDims[rel.fromTable]) factToDims[rel.fromTable] = [];
-    factToDims[rel.fromTable].push(rel.toTable);
+
+  // ── Query 1: Resumo mensal ──────────────────────────────────────────────────
+  // GROUPBY + ADDCOLUMNS agrupa por expressão derivada de data (padrão DAX correto).
+  // TOPN(24, [__mes], DESC) garante os 24 meses mais recentes — jan/2026 incluído.
+  // Métrica: Líquido Faturado (confirmado via debug como valor correto para ranking).
+  const monthlyRows = await runDAX(base, headers,
+    `EVALUATE
+TOPN(
+  24,
+  GROUPBY(
+    ADDCOLUMNS(
+      'fatAConteudo',
+      "__mes", FORMAT('fatAConteudo'[Exibição], "YYYY-MM")
+    ),
+    [__mes],
+    "Faturamento", SUMX(CURRENTGROUP(), 'fatAConteudo'[Líquido Faturado]),
+    "Registros",   COUNTX(CURRENTGROUP(), 'fatAConteudo'[Exibição])
+  ),
+  [__mes], DESC
+)
+ORDER BY [__mes] DESC`
+  );
+
+  if (monthlyRows?.length) {
+    tableSnapshots.push({
+      table: "fatAConteudo — resumo mensal",
+      rows: cleanRows(monthlyRows),
+      aggregated: true,
+    });
+    console.log(`[snapshot] resumo mensal: ${monthlyRows.length} meses`);
+  } else {
+    console.log(`[snapshot] resumo mensal: sem dados`);
   }
 
-  for (const [factTable, dimTables] of Object.entries(factToDims)) {
-    const factCols = tableColMap[factTable];
-    if (!factCols?.numCols?.length) continue;
+  // ── Query 2: Top clientes por mês ───────────────────────────────────────────
+  // TOPN(300, [__mes] DESC, [Faturamento] DESC):
+  //   - Ordena primeiro pelo mês mais recente → jan/2026 sempre no topo
+  //   - Dentro de cada mês, clientes pelo maior Líquido Faturado
+  //   - formatSnapshot limita a MAX_CLIENTS_PER_MONTH clientes por mês
+  const clientMonthRows = await runDAX(base, headers,
+    `EVALUATE
+TOPN(
+  300,
+  GROUPBY(
+    ADDCOLUMNS(
+      'fatAConteudo',
+      "__mes", FORMAT('fatAConteudo'[Exibição], "YYYY-MM")
+    ),
+    [__mes],
+    'fatAConteudo'[Cliente],
+    "Faturamento", SUMX(CURRENTGROUP(), 'fatAConteudo'[Líquido Faturado]),
+    "Registros",   COUNTX(CURRENTGROUP(), 'fatAConteudo'[Exibição])
+  ),
+  [__mes], DESC,
+  [Faturamento], DESC
+)
+ORDER BY [__mes] DESC, [Faturamento] DESC`
+  );
 
-    const sums = factCols.numCols.slice(0, 12).map((c) => `"${c}", SUM('${factTable}'[${c}])`).join(", ");
-
-    for (const dimTable of [...new Set(dimTables)].slice(0, 6)) {
-      const dimCols = tableColMap[dimTable];
-      if (!dimCols?.textCols?.length) continue;
-
-      const groupBy = dimCols.textCols.slice(0, 4).map((c) => `'${dimTable}'[${c}]`).join(", ");
-
-      const rows = await runDAX(
-        base, headers,
-        `EVALUATE
-         TOPN(500,
-           SUMMARIZECOLUMNS(
-             ${groupBy},
-             ${sums},
-             "Registros", COUNTROWS('${factTable}')
-           ),
-           [Registros], DESC
-         )`
-      );
-
-      if (rows?.length) {
-        crossSnapshots.push({ factTable, dimTable, rows: cleanRows(rows) });
-        console.log(`[snapshot] cruzamento ${factTable} × ${dimTable}: ${rows.length} linhas`);
-      }
-    }
+  if (clientMonthRows?.length) {
+    crossSnapshots.push({
+      factTable: "fatAConteudo",
+      dimTable:  "Cliente × Mês",
+      rows: cleanRows(clientMonthRows),
+    });
+    console.log(`[snapshot] cliente × mês: ${clientMonthRows.length} combinações`);
+  } else {
+    console.log(`[snapshot] cliente × mês: sem dados`);
   }
 
   return { tableNames, measures, relationships, tableSnapshots, crossSnapshots };
@@ -306,11 +288,10 @@ export async function getDataSnapshot(token, datasetId, workspaceId, knownTables
 
 // ── Formata snapshot ──────────────────────────────────────────────────────────
 
-const MAX_SNAPSHOT_CHARS = 40_000;
-const MAX_ROWS_CROSS = 200;
-const MAX_ROWS_DIM   = 100;
-const MAX_MEASURES   = 60;
-const MAX_CROSS      = 12;
+const MAX_SNAPSHOT_CHARS    = 12_000;  // ~3.000 tokens
+const MAX_ROWS_DIM          = 24;      // meses de resumo mensal
+const MAX_MEASURES          = 15;      // só nomes, sem expressão
+const MAX_CLIENTS_PER_MONTH = 5;       // top N clientes por mês
 
 function fmtVal(v) {
   if (v === null || v === undefined) return null;
@@ -328,37 +309,49 @@ function rowLine(row) {
 export function formatSnapshot(snapshot) {
   if (!snapshot) return "";
 
-  const { tableNames, measures, relationships, tableSnapshots, crossSnapshots } = snapshot;
+  const { measures, relationships, tableSnapshots, crossSnapshots } = snapshot;
   const lines = ["\n\n--- DADOS REAIS DO DATASET ---"];
 
-  if (tableNames?.length) lines.push(`Tabelas: ${tableNames.join(", ")}`);
-
+  // Relacionamentos (compacto)
   if (relationships?.length) {
-    lines.push(`\nRelacionamentos:`);
-    for (const r of relationships) lines.push(`  ${r.fromTable}[${r.fromColumn}] → ${r.toTable}[${r.toColumn}]`);
+    lines.push(`Relacionamentos: ${relationships.map((r) => `${r.fromTable}[${r.fromColumn}]→${r.toTable}`).join(", ")}`);
   }
 
+  // Medidas — apenas nomes (expressões já estão no knowledge.json)
   if (measures?.length) {
-    lines.push(`\nMedidas DAX:`);
-    for (const m of measures.slice(0, MAX_MEASURES)) lines.push(`  [${m.table}].[${m.name}] = ${m.expression}`);
-    if (measures.length > MAX_MEASURES) lines.push(`  ... +${measures.length - MAX_MEASURES} medidas`);
+    const slice = measures.filter((m) => m.table !== "Medidas" || true).slice(0, MAX_MEASURES);
+    lines.push(`Medidas (${measures.length} total, top ${slice.length}): ${slice.map((m) => `[${m.name}]`).join(", ")}`);
+    if (measures.length > MAX_MEASURES) lines.push(`  ... +${measures.length - MAX_MEASURES} medidas omitidas`);
   }
 
+  // Top clientes por mês
   if (crossSnapshots?.length) {
-    lines.push(`\n=== ANÁLISE CRUZADA (dados para responder perguntas analíticas) ===`);
-    for (const { factTable, dimTable, rows } of crossSnapshots.slice(0, MAX_CROSS)) {
-      lines.push(`\n${dimTable} × ${factTable} (${rows.length} combinações, ordenado por volume):`);
-      for (const row of rows.slice(0, MAX_ROWS_CROSS)) lines.push(rowLine(row));
-      if (rows.length > MAX_ROWS_CROSS) lines.push(`  ... +${rows.length - MAX_ROWS_CROSS} linhas adicionais`);
+    lines.push(`\n=== TOP CLIENTES POR MÊS (top ${MAX_CLIENTS_PER_MONTH}/mês) ===`);
+    for (const { rows } of crossSnapshots) {
+      // As linhas chegam ordenadas por [__mes] DESC, [BrutoNegociado] DESC
+      let currentMonth = null;
+      let clientCount  = 0;
+      for (const row of rows) {
+        const month = row.__mes ?? "";
+        if (month !== currentMonth) {
+          currentMonth = month;
+          clientCount  = 0;
+          lines.push(`  ── ${month} ──`);
+        }
+        if (clientCount < MAX_CLIENTS_PER_MONTH) {
+          const { __mes, ...rest } = row;
+          lines.push(rowLine(rest));
+          clientCount++;
+        }
+      }
     }
   }
 
+  // Resumo mensal
   if (tableSnapshots?.length) {
-    lines.push(`\n=== DADOS POR TABELA ===`);
-    for (const { table, rows, aggregated } of tableSnapshots) {
-      lines.push(`\n"${table}" (${rows.length} ${aggregated ? "combinações" : "registros"}):`);
+    lines.push(`\n=== RESUMO MENSAL ===`);
+    for (const { rows } of tableSnapshots) {
       for (const row of rows.slice(0, MAX_ROWS_DIM)) lines.push(rowLine(row));
-      if (rows.length > MAX_ROWS_DIM) lines.push(`  ... +${rows.length - MAX_ROWS_DIM} linhas`);
     }
   }
 

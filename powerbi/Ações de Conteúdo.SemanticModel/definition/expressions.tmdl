@@ -1,0 +1,71 @@
+expression 'Errors in fatAConteudo' =
+		let
+		Source = fatAConteudo,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Exibição", "Prog", "Programa", "Cliente", "Produto", "Tipo", "Cobertura","Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Agência", "Conteúdo Líquido", "DeC", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Index"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Exibição", "Prog", "Programa", "Cliente", "Produto", "Tipo", "Cobertura", "Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Agência", "Conteúdo Líquido", "DeC", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Index"})
+		in
+		  #"Reordered Columns"
+	lineageTag: d7dd3530-61f4-480f-932a-ccc1f0b81485
+	queryGroup: 'Query Errors - 29/01/2024 15:22:10'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Erros em fatAConteudo' =
+		let
+		Fonte = fatAConteudo,
+		  #"Incompatibilidades de Tipo Detectadas" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Fonte, Table.ColumnsOfType(Fonte, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "O tipo do valor não corresponde ao tipo da coluna.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Fonte, pairs),
+		  #"Índice Adicionado" = Table.AddIndexColumn(#"Incompatibilidades de Tipo Detectadas", "Número da Linha" ,1),
+		  #"Erros Mantidos" = Table.SelectRowsWithErrors(#"Índice Adicionado", {"Exibição", "Programa", "Cliente", "Apresentador", "Produto", "Tipo", "Cobertura", "Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Vinheta", "Agência", "Conteúdo Líquido", "DeC", "Cachê Apresentador", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Prog", "Index"}),
+		  #"Colunas Reordenadas" = Table.ReorderColumns(#"Erros Mantidos", {"Número da Linha", "Exibição", "Programa", "Cliente", "Apresentador", "Produto", "Tipo", "Cobertura", "Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Vinheta", "Agência", "Conteúdo Líquido", "DeC", "Cachê Apresentador", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Prog", "Index"}),
+		    Exibição = #"Colunas Reordenadas"{0}[Exibição]
+		in
+		  Exibição
+	lineageTag: 150c327d-783f-4c14-9dd4-976a10234486
+	queryGroup: 'Erros na Consulta - 08/04/2026 07:42:25'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Exception
+
+expression 'Erros em fatAConteudo (2)' =
+		let
+		Fonte = fatAConteudo,
+		  #"Incompatibilidades de Tipo Detectadas" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Fonte, Table.ColumnsOfType(Fonte, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "O tipo do valor não corresponde ao tipo da coluna.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Fonte, pairs),
+		  #"Índice Adicionado" = Table.AddIndexColumn(#"Incompatibilidades de Tipo Detectadas", "Número da Linha" ,1),
+		  #"Erros Mantidos" = Table.SelectRowsWithErrors(#"Índice Adicionado", {"Exibição", "Programa", "Cliente", "Apresentador", "Produto", "Tipo", "Cobertura", "Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Vinheta", "Agência", "Conteúdo Líquido", "DeC", "Cachê Apresentador", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Prog", "Index"}),
+		  #"Colunas Reordenadas" = Table.ReorderColumns(#"Erros Mantidos", {"Número da Linha", "Exibição", "Programa", "Cliente", "Apresentador", "Produto", "Tipo", "Cobertura", "Origem", "PRAÇA", "Vendedor", "Conteúdo Bruto", "Desconto", "Conteudo Bruto Negociado", "Vinheta", "Agência", "Conteúdo Líquido", "DeC", "Cachê Apresentador", "Produção Plano", "Produção Real", "Comissão Apresentação", "Líquido Arrecadado", "Prog", "Index"}),
+		    Exibição = #"Colunas Reordenadas"{0}[Exibição]
+		in
+		  Exibição
+	lineageTag: 106b9495-e387-4510-9eef-ab23c2d15b85
+	queryGroup: 'Erros na Consulta - 08/04/2026 07:49:55'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Exception
+

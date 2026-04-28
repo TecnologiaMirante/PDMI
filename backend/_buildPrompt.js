@@ -1,3 +1,125 @@
+// ── buildKnowledgeContext ─────────────────────────────────────────────────────
+// Converte um knowledge.json (gerado por scripts/extract-knowledge.js) em texto
+// estruturado para o system prompt do Claude.
+//
+// Futuro: quando houver múltiplos dashboards, esta função receberá o knowledge
+// correto já selecionado por dashboardId em server.js — nenhuma mudança necessária aqui.
+
+export function buildKnowledgeContext(knowledge) {
+  if (!knowledge) return null;
+
+  const lines = [];
+  lines.push("--- ESTRUTURA DO MODELO DE DADOS ---");
+  lines.push(`Dashboard: ${knowledge.dashboardName}`);
+  lines.push("INSTRUÇÃO: Quando o usuário pedir a lista de colunas, apresente todos os nomes explicitamente — nunca resuma nem agrupe.");
+
+  if (knowledge.dataSource) {
+    const ds = knowledge.dataSource;
+    const note = ds.notes ? ` (${ds.notes})` : "";
+    lines.push(`Fonte: ${ds.type}${note}`);
+  }
+
+  // ── Tabelas e colunas ───────────────────────────────────────────────────────
+  for (const table of knowledge.tables ?? []) {
+    lines.push(`\nTABELA: ${table.name}`);
+
+    const dateCols    = [];
+    const dimCols     = [];
+    const moneyCols   = [];
+    const pctCols     = [];
+    const numericCols = [];
+
+    for (const col of table.columns ?? []) {
+      if (col.dataType === "dateTime" || col.dataType === "date") {
+        dateCols.push(col);
+      } else if (col.dataType === "string") {
+        dimCols.push(col);
+      } else {
+        const fmt = col.formatString ?? "";
+        if (fmt.includes("R$"))     moneyCols.push(col);
+        else if (fmt.includes("%")) pctCols.push(col);
+        else                        numericCols.push(col);
+      }
+    }
+
+    // Totais pré-calculados — enviados explicitamente para evitar erro de contagem do modelo
+    const totalGeral = dateCols.length + dimCols.length + moneyCols.length + pctCols.length + numericCols.length;
+    lines.push(`  Totais: data=${dateCols.length} | dimensões=${dimCols.length} | monetárias=${moneyCols.length} | percentuais=${pctCols.length} | numéricas=${numericCols.length} | TOTAL GERAL=${totalGeral}`);
+    lines.push("  INSTRUÇÃO: Não recalcule totais manualmente; use os totais fornecidos acima.");
+
+    if (dateCols.length) {
+      lines.push(`  [DATA — ${dateCols.length} coluna(s)]`);
+      for (const col of dateCols) {
+        lines.push(`    ${col.name} (${col.dataType}) — suporta filtros por período (time intelligence)`);
+      }
+    }
+    if (dimCols.length) {
+      lines.push(`  [DIMENSÕES — texto — ${dimCols.length} colunas]`);
+      for (const col of dimCols) {
+        lines.push(`    ${col.name} (string)`);
+      }
+    }
+    if (moneyCols.length) {
+      lines.push(`  [VALORES MONETÁRIOS — R$ — ${moneyCols.length} colunas]`);
+      for (const col of moneyCols) {
+        lines.push(`    ${col.name} (double, R$)`);
+      }
+    }
+    if (pctCols.length) {
+      lines.push(`  [PERCENTUAIS — ${pctCols.length} coluna(s)]`);
+      for (const col of pctCols) {
+        lines.push(`    ${col.name} (double, %)`);
+      }
+    }
+    if (numericCols.length) {
+      lines.push(`  [NUMÉRICOS — ${numericCols.length} colunas]`);
+      for (const col of numericCols) {
+        lines.push(`    ${col.name} (double)`);
+      }
+    }
+  }
+
+  // ── Medidas DAX ─────────────────────────────────────────────────────────────
+  if (knowledge.measures?.length) {
+    lines.push("\nMEDIDAS DAX:");
+    for (const m of knowledge.measures) {
+      const fmt = m.formatString ? `  →  formato: ${m.formatString}` : "";
+      lines.push(`  [${m.name}] = ${m.expression}${fmt}`);
+    }
+  }
+
+  // ── Relacionamentos ─────────────────────────────────────────────────────────
+  if (knowledge.relationships?.length) {
+    lines.push("\nRELACIONAMENTOS:");
+    for (const r of knowledge.relationships) {
+      // Oculta IDs de tabelas de sistema (muito verboso) mas informa a semântica
+      const toLabel = r.toTable.startsWith("LocalDateTable_")
+        ? "tabela de datas interna (time intelligence)"
+        : `${r.toTable}[${r.toColumn}]`;
+      lines.push(`  ${r.fromTable}[${r.fromColumn}] → ${toLabel}`);
+    }
+  }
+
+  // ── Páginas ─────────────────────────────────────────────────────────────────
+  const visiblePages = (knowledge.pages ?? []).filter((p) => !p.hidden);
+  const hiddenPages  = (knowledge.pages ?? []).filter((p) =>  p.hidden);
+
+  if (visiblePages.length) {
+    lines.push("\nPÁGINAS DO RELATÓRIO (em ordem de exibição):");
+    for (const p of visiblePages) {
+      lines.push(`  ${p.order}. ${p.name}`);
+    }
+  }
+  if (hiddenPages.length) {
+    lines.push(`  [ocultas: ${hiddenPages.map((p) => p.name).join(", ")}]`);
+  }
+
+  lines.push("\n--- FIM DA ESTRUTURA ---");
+  return lines.join("\n");
+}
+
+// ── buildSystemPrompt ─────────────────────────────────────────────────────────
+
 export function buildSystemPrompt({
   titulo,
   descricao,

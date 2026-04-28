@@ -1,0 +1,29 @@
+table Medidas
+	lineageTag: 55b2ddf8-d364-4385-a1b8-3e243f7052e6
+
+	measure 'Dif Prod' = CALCULATE(SUM(fatAConteudo[Produção Plano])) - CALCULATE(SUM(fatAConteudo[Produção Real]))
+		lineageTag: a32c6b65-6c38-4f70-a49a-3c5c617b29df
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Desconto = -1*CALCULATE(SUM(fatAConteudo[Desconto]))
+		formatString: 0%;-0%;0%
+		lineageTag: c24e8819-1a83-4741-a101-0f9fbd418b5f
+
+	column Column
+		formatString: 0
+		lineageTag: a870e771-bf39-4141-a09b-aa8ced01bd4f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Medidas = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = 1f2aeebea0a248a9ad198795741c74d3
+
+	annotation 436ba87b-9c83-4389-a31b-ebd06a36be98 = {"Expression":""}
+
