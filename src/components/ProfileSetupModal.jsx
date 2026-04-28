@@ -26,9 +26,9 @@ export default function ProfileSetupModal() {
       .catch(() => setSectors([]));
   }, []);
 
-  // Perfil incompleto = sem sectorId
+  // Perfil incompleto = documento não existe ainda ou existe sem sectorId
   const isIncomplete =
-    userProfile !== null && !userProfile?.sectorId && !userProfile?.setor;
+    userProfile === null || (!userProfile?.sectorId && !userProfile?.setor);
 
   if (!user || !isIncomplete) return null;
 
@@ -137,7 +137,7 @@ export default function ProfileSetupModal() {
               >
                 <SelectValue placeholder="Selecione seu setor..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[10000]">
                 {sectors.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}

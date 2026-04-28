@@ -1,10 +1,11 @@
 import { config as loadEnv } from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
+import fs from "fs";
 import express from "express";
 import cors from "cors";
 import Anthropic from "@anthropic-ai/sdk";
-import { buildSystemPrompt } from "./_buildPrompt.js";
+import { buildSystemPrompt, buildKnowledgeContext } from "./_buildPrompt.js";
 import { getPBIToken, getDataSnapshot, formatSnapshot } from "./_powerbi.js";
 
 // Carrega .env da raiz em dev local (Render injeta env vars diretamente em produção)
@@ -13,6 +14,44 @@ loadEnv({ path: path.join(__dirname, "../.env") });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// ── Knowledge registry ────────────────────────────────────────────────────────
+// MVP: único arquivo de conhecimento (acoes-de-conteudo).
+// Futuro: mapear dashboardId → arquivo JSON, bastando adicionar entradas ao mapa
+// e ajustar a lógica de seleção em loadKnowledge().
+//
+// Exemplo futuro:
+//   const KNOWLEDGE_MAP = {
+//     "abc123": "acoes-de-conteudo.knowledge.json",
+//     "def456": "outro-dashboard.knowledge.json",
+//   };
+
+const KNOWLEDGE_DIR = path.join(__dirname, "../powerbi/knowledge");
+const knowledgeCache = new Map();
+
+function loadKnowledge(dashboardId = null) {
+  // MVP: ignora dashboardId e retorna o único arquivo disponível.
+  // Quando houver múltiplos dashboards, usar dashboardId como chave do mapa.
+  const cacheKey = dashboardId ?? "_default";
+  if (knowledgeCache.has(cacheKey)) return knowledgeCache.get(cacheKey);
+
+  const file = path.join(KNOWLEDGE_DIR, "acoes-de-conteudo.knowledge.json");
+  if (!fs.existsSync(file)) {
+    console.warn(`[knowledge] arquivo não encontrado: ${file}`);
+    knowledgeCache.set(cacheKey, null);
+    return null;
+  }
+  try {
+    const knowledge = JSON.parse(fs.readFileSync(file, "utf8"));
+    knowledgeCache.set(cacheKey, knowledge);
+    console.log(`[knowledge] carregado: ${path.basename(file)} (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+    return knowledge;
+  } catch (err) {
+    console.warn(`[knowledge] falha ao carregar: ${err.message}`);
+    knowledgeCache.set(cacheKey, null);
+    return null;
+  }
+}
 
 // CORS: em produção, configurar CORS_ORIGIN com a URL do frontend no Render
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
@@ -76,12 +115,30 @@ app.post("/api/chat", async (req, res) => {
     timeout: 55_000,
   });
 
-  const system = snapshotText
-    ? [
-        { type: "text", text: buildSystemPrompt(context), cache_control: { type: "ephemeral" } },
-        { type: "text", text: snapshotText, cache_control: { type: "ephemeral" } },
-      ]
-    : buildSystemPrompt(context);
+  // Carrega o knowledge do dashboard.
+  // context.dashboardId será usado no futuro quando o frontend começar a enviá-lo.
+  // Por ora, loadKnowledge(null) retorna o único knowledge disponível.
+  const knowledge     = loadKnowledge(context.dashboardId ?? null);
+  const knowledgeText = buildKnowledgeContext(knowledge);
+
+  // Monta blocos do system em ordem crescente de volatilidade:
+  //   1. Persona + regras (quase nunca muda → cache mais duradouro)
+  //   2. Estrutura do modelo / knowledge (muda só quando o PBIP muda)
+  //   3. Snapshot de dados (muda a cada refresh do Power BI)
+  // Cada bloco com cache_control:ephemeral → Anthropic reutiliza cache enquanto o conteúdo não mudar.
+  const systemBlocks = [
+    { type: "text", text: buildSystemPrompt(context), cache_control: { type: "ephemeral" } },
+  ];
+  if (knowledgeText) {
+    systemBlocks.push({ type: "text", text: knowledgeText, cache_control: { type: "ephemeral" } });
+  }
+  if (snapshotText) {
+    systemBlocks.push({ type: "text", text: snapshotText, cache_control: { type: "ephemeral" } });
+  }
+  // Se só há um bloco, envia como string (evita overhead de array com 1 item)
+  const system = systemBlocks.length === 1 ? systemBlocks[0].text : systemBlocks;
+
+  console.log(`[chat] system blocks: ${systemBlocks.length} (knowledge: ${!!knowledgeText}, snapshot: ${!!snapshotText})`);
 
   // Tenta criar o stream antes de enviar headers SSE.
   // Se falhar aqui, ainda podemos retornar um HTTP error normal.

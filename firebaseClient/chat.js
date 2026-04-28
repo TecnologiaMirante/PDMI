@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "firebase/firest
 import { db } from "./config";
 
 export async function getChatHistory(userId, dashboardId) {
-  if (!userId || !dashboardId) return null;
+  if (!userId || !dashboardId) return [];
   try {
     const ref = doc(db, "chat_history", userId, "dashboards", dashboardId);
     const snap = await getDoc(ref);
@@ -12,7 +12,7 @@ export async function getChatHistory(userId, dashboardId) {
   } catch (error) {
     console.error("Erro ao buscar histórico do chat:", error);
   }
-  return null;
+  return [];
 }
 
 export async function saveChatHistory(userId, dashboardId, messages) {
