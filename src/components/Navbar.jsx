@@ -5,7 +5,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ThemeToggle from "@/components/ThemeToggle";
-import portalLogo from "@/assets/PORTAL-DE-DADOS.png";
+import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 import {
   Select,
   SelectContent,

@@ -286,25 +286,25 @@ export default function DashboardFormPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <nav className="sticky top-0 z-10 flex items-center gap-4 px-4 md:px-6 py-4 shadow-sm bg-card border-b border-border">
+      <nav className="sticky top-0 z-10 flex items-center gap-4 px-4 md:px-6 py-4 shadow-nav" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/admin")}
-          className="gap-1 text-primary"
+          className="gap-1 text-white/90 hover:text-white hover:bg-white/10"
         >
           <ChevronLeft className="size-4" />
           Voltar
         </Button>
-        <h1 className="text-lg font-bold text-foreground">
+        <h1 className="text-lg font-bold text-white">
           {isEditMode ? "Editar Dashboard" : "Criar Dashboard"}
         </h1>
         <div className="ml-auto flex items-center gap-2">
-          <ThemeToggle variant="page" />
+          <ThemeToggle variant="navbar" />
           <Button
             onClick={handleSubmit(onSubmit)}
             disabled={saving}
-            className="gap-1.5"
+            className="gap-1.5 bg-white text-[#006064] hover:bg-white/90 font-semibold"
           >
             <Save className="size-4" />
             {saving ? "Salvando..." : "Salvar"}

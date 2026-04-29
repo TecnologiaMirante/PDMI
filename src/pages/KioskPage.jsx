@@ -5,7 +5,7 @@ import { X, ChevronLeft, ChevronRight, Play, Pause, Maximize2, Loader2 } from "l
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import portalLogo from "@/assets/PORTAL-DE-DADOS.png";
+import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 
 export default function KioskPage() {
   const [searchParams] = useSearchParams();

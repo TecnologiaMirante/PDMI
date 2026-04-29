@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import portalLogo from "@/assets/PORTAL-DE-DADOS.png";
+import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 
 export default function ProfileSetupModal() {
   const { user, userProfile, refreshProfile } = useAuth();

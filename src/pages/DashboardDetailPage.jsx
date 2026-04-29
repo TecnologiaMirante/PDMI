@@ -301,10 +301,10 @@ export default function DashboardDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <nav className="h-14.25 border-b border-border bg-card flex items-center px-4 md:px-6 gap-4">
-          <Skeleton className="h-8 w-24 rounded-lg" />
-          <Skeleton className="h-8 w-8 rounded-lg" />
-          <Skeleton className="flex-1 h-6 max-w-50" />
+        <nav className="h-14.25 flex items-center px-4 md:px-6 gap-4 shadow-nav shrink-0" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
+          <Skeleton className="h-8 w-24 rounded-lg opacity-40" />
+          <Skeleton className="h-8 w-8 rounded-lg opacity-40" />
+          <Skeleton className="flex-1 h-6 max-w-50 opacity-40" />
         </nav>
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
           <aside className="w-full lg:w-72 border-b lg:border-r border-border p-4 space-y-6">
@@ -344,12 +344,12 @@ export default function DashboardDetailPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col lg:h-screen lg:overflow-hidden">
       {/* ── Navbar ──────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-50 flex items-center gap-3 px-4 md:px-6 py-2.5 shadow-sm bg-card border-b border-border shrink-0">
+      <nav className="sticky top-0 z-50 flex items-center gap-3 px-4 md:px-6 py-2.5 shadow-nav shrink-0" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/home")}
-          className="gap-1 text-primary shrink-0"
+          className="gap-1 text-white/90 hover:text-white hover:bg-white/10 shrink-0"
         >
           <ChevronLeft className="size-4" />
           <span className="hidden sm:inline">Voltar</span>
@@ -357,7 +357,7 @@ export default function DashboardDetailPage() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-foreground hidden lg:flex"
+          className="text-white/70 hover:text-white hover:bg-white/10 hidden lg:flex"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           title={isSidebarOpen ? "Recolher Menu" : "Expandir Menu"}
         >
@@ -369,10 +369,10 @@ export default function DashboardDetailPage() {
         </Button>
 
         <div className="flex-1 min-w-0 flex items-center gap-2">
-          <Badge variant="secondary" className="shrink-0 hidden sm:inline-flex">
+          <Badge className="shrink-0 hidden sm:inline-flex bg-white/15 text-white border-white/20 hover:bg-white/20">
             {sectorName || "Sem setor"}
           </Badge>
-          <h1 className="text-sm font-bold text-foreground truncate">
+          <h1 className="text-sm font-bold text-white truncate">
             {dashboard.titulo}
           </h1>
         </div>
@@ -387,7 +387,7 @@ export default function DashboardDetailPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => navigate(`/admin/dashboard/${id}/edit`)}
-                      className="gap-1.5 text-muted-foreground hover:text-foreground"
+                      className="gap-1.5 text-white/70 hover:text-white hover:bg-white/10"
                     >
                       <Pencil className="size-3.5" />
                       <span className="hidden sm:inline">Editar</span>
@@ -405,7 +405,7 @@ export default function DashboardDetailPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="gap-1.5 text-muted-foreground hover:text-destructive"
+                          className="gap-1.5 text-white/70 hover:text-red-300 hover:bg-red-500/15"
                         >
                           <Trash2 className="size-3.5" />
                           <span className="hidden sm:inline">Excluir</span>
@@ -444,7 +444,7 @@ export default function DashboardDetailPage() {
               </div>
             </TooltipProvider>
           )}
-          <ThemeToggle variant="page" />
+          <ThemeToggle variant="navbar" />
         </div>
       </nav>
 

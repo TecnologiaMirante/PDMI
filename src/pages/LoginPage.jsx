@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import logoMirante from "@/assets/logo_mirante.png";
 import { toast } from "sonner";
 import { ShieldCheck, BarChart3 } from "lucide-react";
-import portalLogo from "@/assets/PORTAL-DE-DADOS.png";
+import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 import { Button } from "@/components/ui/button";
 import {
   Card,

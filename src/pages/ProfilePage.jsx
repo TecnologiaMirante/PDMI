@@ -23,7 +23,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { getUserStats, getSectors, updateUser } from "@infra/firebase";
 import { toast } from "sonner";
-import portalLogo from "@/assets/PORTAL-DE-DADOS.png";
+import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 
 // ── Helpers ────────────────────────────────────────────────────
 function fmtTime(seconds) {
