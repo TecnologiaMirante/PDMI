@@ -1,0 +1,1141 @@
+{
+  "dashboardName": "Indicadores Portal",
+  "generatedAt": "2026-04-29T14:34:27.632Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "dimData",
+      "columns": [
+        {
+          "name": "SemanaNoMes",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Mes",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Ano",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "mesNum",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "SemanaNoAno",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "dimDeal_Source",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Origem",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimOrganization",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Cliente",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Segmento",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimTasks",
+      "columns": [
+        {
+          "name": "tasks.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.subject",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.type",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.hour",
+          "dataType": "dateTime",
+          "formatString": "Long Time",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.done",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.notes",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.deal_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.done_date",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.created_at",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.date",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.deal.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.deal._id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.deal.name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tasks.deal.rating",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "user.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Executivo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Equipe",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimTeam",
+      "columns": [
+        {
+          "name": "teams.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams._id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams.created_at",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams.updated_at",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams.name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams.user_ids",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "teams.team_users",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "total",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "has_more",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimUser",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Executivo Completo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "email",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Equipe",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Executivo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "created_at",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "updated_at",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "last_login",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "active",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "hidden",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Q dist last_login",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "fatNeogiciacao",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "distinctCount"
+        },
+        {
+          "name": "name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "last_activity_at",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Data Criação",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "updated_at",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "win",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Data Fechamento",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "organization.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "user.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_source.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_products.amount",
+          "dataType": "double",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "deal_products.base_price",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "deal_products.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_products.price",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.0;-\"R$\"\\ #,0.0;\"R$\"\\ #,0.0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "deal_products.total",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.0;-\"R$\"\\ #,0.0;\"R$\"\\ #,0.0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Veículo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Produto",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_products.discount",
+          "dataType": "double",
+          "formatString": "0.00%;-0.00%;0.00%",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "deal_products.discount_type",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_lost_reason.name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "contacts",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_custom_fields",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "campaign",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_stage.name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Funil",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "deal_source.name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "next_task.id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "next_task.subject",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "next_task.type",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "next_task.date.1",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Data Fechamento Ajustada",
+          "dataType": "string",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "fatProdutosSolucoes",
+      "columns": [
+        {
+          "name": "ID_Postagem",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Usuario_ID",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "title",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "tag",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "path",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "thumbnail",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "visualizacoes",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "visivel",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "data_inicio_validade",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "data_fim_validade",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "createdAt",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "updatedAt",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dataVisualizacao",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "email",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "usuarios",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dataVis",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "NomeDoDiaSemana",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "RangeHorarioComPeriodo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Dia da Semana",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Hora",
+          "dataType": "dateTime",
+          "formatString": "Long Time",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Hora acesso",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "TotalVisualizacoesDia",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "DataDiff",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "Medidas",
+      "columns": [
+        {
+          "name": "Column1",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Qt_vendas",
+      "table": "Medidas",
+      "expression": "IF(",
+      "formatString": "0"
+    },
+    {
+      "name": "Rank_Segmentos",
+      "table": "Medidas",
+      "expression": "rankx(all(dimOrganization[Segmento]), CALCULATE(SUM(fatNeogiciacao[deal_products.total])))",
+      "formatString": "0"
+    },
+    {
+      "name": "Segmento",
+      "table": "Medidas",
+      "expression": "if(",
+      "formatString": null
+    },
+    {
+      "name": "Desc_cliente",
+      "table": "Medidas",
+      "expression": "(1-DIVIDE(CALCULATE(SUM(fatNeogiciacao[deal_products.price])), CALCULATE(SUM(fatNeogiciacao[deal_products.base_price])), 0))",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "Desc_total",
+      "table": "Medidas",
+      "expression": "(CALCULATE(SUM(fatNeogiciacao[deal_products.base_price])) - CALCULATE(SUM(fatNeogiciacao[deal_products.price])))/CALCULATE(SUM(fatNeogiciacao[deal_products.amount]))",
+      "formatString": null
+    },
+    {
+      "name": "Desc_Agencia",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(pric))",
+      "formatString": null
+    },
+    {
+      "name": "V Qt Bruto",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.base_price]))*CALCULATE(SUM(fatNeogiciacao[deal_products.amount]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "V Uni Bruto",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.base_price]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "V Uni BSD",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.price]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "V Qt BSD",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.price]))*CALCULATE(SUM(fatNeogiciacao[deal_products.amount]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "V Qt Desc A",
+      "table": "Medidas",
+      "expression": "[V Qt BSD] * (CALCULATE(SUM(fatNeogiciacao[deal_products.discount]))/100)",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "VL",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "% Desc C",
+      "table": "Medidas",
+      "expression": "[V Qt Desc C]/[V Qt Bruto]",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "% Desc A",
+      "table": "Medidas",
+      "expression": "[V Qt Desc A]/[V Qt BSD]",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "V Qt Desc C",
+      "table": "Medidas",
+      "expression": "[V Qt Bruto]-[V Qt BSD]",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "I Conversao",
+      "table": "Medidas",
+      "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), FILTER(fatNeogiciacao, fatNeogiciacao[win] = \"Vendido\")), CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), FILTER(fatNeogiciacao, fatNeogiciacao[win] <> \"Perdido\")), 0)",
+      "formatString": null
+    },
+    {
+      "name": "Ticket Médio",
+      "table": "Medidas",
+      "expression": "CALCULATE(CALCULATE(sum(fatNeogiciacao[deal_products.total]))/CALCULATE(DISTINCTCOUNT(fatNeogiciacao[_id])),FILTER(fatNeogiciacao, fatNeogiciacao[win] = \"Vendido\"))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "I Conversao 2",
+      "table": "Medidas",
+      "expression": "DIVIDE(CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), FILTER(fatNeogiciacao, fatNeogiciacao[win] = \"Vendido\")), CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id])), 0)",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "Data Diff",
+      "table": "Medidas",
+      "expression": "VAR DataInicialSelecionada = MIN('fatNeogiciacao'[Data Fechamento])",
+      "formatString": "0"
+    },
+    {
+      "name": "V QT PeriodoAnterior Win",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "V Total Atual",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.total]))",
+      "formatString": "#,0"
+    },
+    {
+      "name": "Comp Total Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[V Total Atual] - [V Total PeriodoAnterior Win]",
+      "formatString": null
+    },
+    {
+      "name": "V Total PeriodoAnterior Win",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": null
+    },
+    {
+      "name": "V QT PeriodoAnterior Lose",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "AUX",
+      "table": "Medidas",
+      "expression": "VAR DataInicialSelecionada = MIN('fatNeogiciacao'[Data Fechamento])",
+      "formatString": "General Date"
+    },
+    {
+      "name": "Comp Qt Win Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[V Qt Atual Win] - [V QT PeriodoAnterior Win]",
+      "formatString": "0"
+    },
+    {
+      "name": "V Qt Atual Win",
+      "table": "Medidas",
+      "expression": "CALCULATE(",
+      "formatString": "0"
+    },
+    {
+      "name": "V Qt Atual Lose",
+      "table": "Medidas",
+      "expression": "CALCULATE(",
+      "formatString": "0"
+    },
+    {
+      "name": "Comp Qt Lose Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[V Qt Atual Lose] - [V QT PeriodoAnterior LOse]",
+      "formatString": "0"
+    },
+    {
+      "name": "V QT Negociacoes DATA",
+      "table": "Medidas",
+      "expression": "CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), USERELATIONSHIP(dimData[Date], fatNeogiciacao[Data Criação]))",
+      "formatString": null
+    },
+    {
+      "name": "V QT Negociacoes",
+      "table": "Medidas",
+      "expression": "CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id])",
+      "formatString": "0"
+    },
+    {
+      "name": "I Conversao PeriodoAnterior",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "medida",
+      "table": "Medidas",
+      "expression": "WEEKNUM(DATE(2024, 12, 05))",
+      "formatString": "0"
+    },
+    {
+      "name": "V QT Novas Oportunidades TODAY",
+      "table": "Medidas",
+      "expression": "CALCULATE(",
+      "formatString": "0"
+    },
+    {
+      "name": "V QT Novas Oportunidades TODAY PeriodoAnterior",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "Medida 2",
+      "table": "Medidas",
+      "expression": "CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), USERELATIONSHIP(dimData[Date], fatNeogiciacao[Data Criação]))",
+      "formatString": "0"
+    },
+    {
+      "name": "Comp Novas Oportunidades Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[V QT Novas Oportunidades TODAY] - [V QT Novas Oportunidades TODAY PeriodoAnterior]",
+      "formatString": "0"
+    },
+    {
+      "name": "Comp Conversao Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[I Conversao 2] - [I Conversao PeriodoAnterior]",
+      "formatString": null
+    },
+    {
+      "name": "V Total Atual Data",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatNeogiciacao[deal_products.total]), USERELATIONSHIP(dimData[Date], fatNeogiciacao[Data Criação]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "V QT Novas Oportunidades DATA PeriodoAnterior",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "V QT Novas Oportunidades DATA",
+      "table": "Medidas",
+      "expression": "CALCULATE(DISTINCTCOUNT(fatNeogiciacao[id]), USERELATIONSHIP(dimData[Date], fatNeogiciacao[Data Criação]))",
+      "formatString": "0"
+    },
+    {
+      "name": "Comp Novas Oportunidades DATA Atual x Anterior",
+      "table": "Medidas",
+      "expression": "[V QT Novas Oportunidades DATA] - [V QT Novas Oportunidades DATA PeriodoAnterior]",
+      "formatString": "0"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'user.id'",
+      "toTable": "dimUser",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'organization.id'",
+      "toTable": "dimOrganization",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'deal_source.id'",
+      "toTable": "dimDeal_Source",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimTeam",
+      "fromColumn": "'teams.created_at'",
+      "toTable": "LocalDateTable_5638ec01-81db-4dc4-8aba-66ddcd758ff6",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimTeam",
+      "fromColumn": "'teams.updated_at'",
+      "toTable": "LocalDateTable_44a8ed29-f7f7-481f-ae4d-d41521ac1192",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimTasks",
+      "fromColumn": "'tasks.done_date'",
+      "toTable": "LocalDateTable_4ca98b48-49d2-4a15-9f65-283a5fa176ee",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimTasks",
+      "fromColumn": "'tasks.created_at'",
+      "toTable": "LocalDateTable_4c790ae6-4cfb-4019-ba63-92a3e7af8190",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'next_task.date.1'",
+      "toTable": "LocalDateTable_1466367f-4e01-4a20-b55a-df285fc046cf",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'next_task.id'",
+      "toTable": "dimTasks",
+      "toColumn": "'tasks.id'",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimTasks",
+      "fromColumn": "Executivo",
+      "toTable": "dimUser",
+      "toColumn": "'Executivo Completo'",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "updated_at",
+      "toTable": "LocalDateTable_cb405fba-d8f4-460a-9cf5-2400b4ff95dd",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "last_activity_at",
+      "toTable": "LocalDateTable_47611640-02b1-406a-b28f-61ccff639a09",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimTasks",
+      "fromColumn": "'tasks.date'",
+      "toTable": "LocalDateTable_77d0f199-f603-4a25-8ca9-59d92f8cee8f",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimUser",
+      "fromColumn": "created_at",
+      "toTable": "LocalDateTable_25a8d92f-3b4d-4366-9325-83b78c9e871c",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimUser",
+      "fromColumn": "updated_at",
+      "toTable": "LocalDateTable_dc27cc21-f61c-4764-8bae-ea8f50fc8c95",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimUser",
+      "fromColumn": "last_login",
+      "toTable": "LocalDateTable_0ae24212-16df-4b5d-aa06-34d770854c47",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "data_inicio_validade",
+      "toTable": "LocalDateTable_dda1d067-d882-4a96-beb3-fed81f423843",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "data_fim_validade",
+      "toTable": "LocalDateTable_56a08a9a-e086-48ba-8d30-1d6ffb6d80f1",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "createdAt",
+      "toTable": "LocalDateTable_6f157dcd-9864-44ff-b87c-4653ee74d8a0",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "updatedAt",
+      "toTable": "LocalDateTable_9f2c892a-4f92-4a53-8ecb-a7c2ca6bb538",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "dataVisualizacao",
+      "toTable": "LocalDateTable_a2b66df7-a4c6-420e-836f-2f4ba09ba90a",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'Data Fechamento'",
+      "toTable": "dimData",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'Data Criação'",
+      "toTable": "dimData",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatNeogiciacao",
+      "fromColumn": "'Data Fechamento Ajustada'",
+      "toTable": "dimData",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatProdutosSolucoes",
+      "fromColumn": "dataVis",
+      "toTable": "dimData",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "ReportSection42d896b1ecc91076dfc3",
+      "name": "Funil Grupo",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "2d48757831a0ae8d96e2",
+      "name": "Funil Projeto",
+      "hidden": false
+    },
+    {
+      "order": 3,
+      "id": "02995d8611920d5b052d",
+      "name": "Acesso",
+      "hidden": false
+    },
+    {
+      "order": 4,
+      "id": "5abaca055ae70a4aa909",
+      "name": "Indicadores P&S",
+      "hidden": false
+    }
+  ],
+  "datasetId": "b01bcce9-ce63-4d1a-a636-efdb53b79891",
+  "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9"
+}

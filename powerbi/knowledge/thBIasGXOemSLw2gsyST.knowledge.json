@@ -1,0 +1,747 @@
+{
+  "dashboardName": "Afilidata",
+  "generatedAt": "2026-04-29T14:34:28.194Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "campo_adcionais",
+      "columns": [
+        {
+          "name": "order_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "creative_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "line_item_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "master_creative_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dimension_date",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "line_item_goal_quantity",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_start",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_first_quartile",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_midpoint",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_third_quartile",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_complete",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_average_view_rate",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_average_view_time",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_viewership_completion_rate",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_trueview_skip_rate",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_trueview_views",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "video_trueview_vtr",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_segmentos_setor_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_segmentos_setor_valor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_campanha_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_campanha_valor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_sub_segmentos_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_sub_segmentos_valor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_de_midia_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_de_midia_valor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_de_video_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "cf_tipo_de_video_valor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dt_extracao",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "pdata",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimAdvertiser",
+      "columns": [
+        {
+          "name": "AdvertiserId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Advertiser",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimCreative",
+      "columns": [
+        {
+          "name": "CreativeId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Creative",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "CreativeType",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimensao",
+      "columns": [
+        {
+          "name": "OrderId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "OrderName",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "GoalImpressions",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "AdvertiserId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Advertiser",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "CreativeId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Creative",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "CreativeType",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItemId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItem",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItemType",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dt_carga",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "pdata",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimLineItem",
+      "columns": [
+        {
+          "name": "LineItemId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItem",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItemType",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimOrder",
+      "columns": [
+        {
+          "name": "OrderId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "OrderName",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "AdvertiserId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "fatImpressions",
+      "columns": [
+        {
+          "name": "OrderId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "LineItemId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "CreativeId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "DeviceCategory",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "City",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "RefererURL",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Impressions",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Clicks",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "ViewableImpressions",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "pdata",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Custom",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "team_order",
+      "columns": [
+        {
+          "name": "order_id",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "startDateTime",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "endDateTime",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "unlimitedEndDateTime",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "status",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "isArchived",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "notes",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "externalOrderId",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "count"
+        },
+        {
+          "name": "poNumber",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "currencyCode",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "advertiserId",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "count"
+        },
+        {
+          "name": "advertiserContactIds",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "agencyId",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "count"
+        },
+        {
+          "name": "agencyContactIds",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "creatorId",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "count"
+        },
+        {
+          "name": "traffickerId",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "count"
+        },
+        {
+          "name": "secondaryTraffickerIds",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "salespersonId",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "count"
+        },
+        {
+          "name": "secondarySalespersonIds",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "appliedLabels",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "effectiveAppliedLabels",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "lastModifiedByApp",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "isProgrammatic",
+          "dataType": "boolean",
+          "formatString": "\"\"TRUE\"\";\"\"TRUE\"\";\"\"FALSE\"\"",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "appliedTeamIds",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "appliedTeam",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "lastModifiedDateTime",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "customFieldValues",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "lt_load",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "pdata",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dt_partition",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "ImpressGola",
+      "table": "dimensao",
+      "expression": "COUNT(dimCalendar[Date])*CALCULATE(SUM(dimensao[GoalImpressions]))",
+      "formatString": "0"
+    },
+    {
+      "name": "CTR",
+      "table": "fatImpressions",
+      "expression": "DIVIDE(CALCULATE(SUM(fatImpressions[Clicks])), CALCULATE(SUM(fatImpressions[Impressions])), 0)",
+      "formatString": "0.00%;-0.00%;0.00%"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "dimensao",
+      "fromColumn": "dt_carga",
+      "toTable": "LocalDateTable_73f8f9c2-6061-418c-a8e6-b234d7f995d7",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "campo_adcionais",
+      "fromColumn": "dimension_date",
+      "toTable": "LocalDateTable_b33e3f70-a23b-49bf-acae-cc97aae0a8ee",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "campo_adcionais",
+      "fromColumn": "dt_extracao",
+      "toTable": "LocalDateTable_b1e826a3-b7a0-4b60-be90-a5b2e4167404",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "campo_adcionais",
+      "fromColumn": "pdata",
+      "toTable": "LocalDateTable_5847d61d-32a2-4027-9d7c-d09a23e65386",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "team_order",
+      "fromColumn": "pdata",
+      "toTable": "LocalDateTable_fd788ed1-da5c-45fd-b515-edf75a9d3338",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatImpressions",
+      "fromColumn": "OrderId",
+      "toTable": "dimOrder",
+      "toColumn": "OrderId",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimOrder",
+      "fromColumn": "AdvertiserId",
+      "toTable": "dimAdvertiser",
+      "toColumn": "AdvertiserId",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatImpressions",
+      "fromColumn": "CreativeId",
+      "toTable": "dimCreative",
+      "toColumn": "CreativeId",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatImpressions",
+      "fromColumn": "LineItemId",
+      "toTable": "dimLineItem",
+      "toColumn": "LineItemId",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimensao",
+      "fromColumn": "OrderId",
+      "toTable": "dimOrder",
+      "toColumn": "OrderId",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimCalendar",
+      "fromColumn": "Date",
+      "toTable": "LocalDateTable_acf65962-ea6f-4f6a-9ca9-a9f2d4e57aff",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatImpressions",
+      "fromColumn": "pdata",
+      "toTable": "dimCalendar",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimensao",
+      "fromColumn": "pdata",
+      "toTable": "dimCalendar",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "team_order",
+      "fromColumn": "dt_partition",
+      "toTable": "LocalDateTable_79fa8a6c-7b25-4b5e-86d5-0dfbfa88abf3",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "1d391a138a7c5ea814d5",
+      "name": "Afilidata",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "2e4394e96de0a7a64db1",
+      "name": "Página 1",
+      "hidden": true
+    }
+  ],
+  "datasetId": "e49d0a06-f1df-4560-a501-cab1be848cc7",
+  "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9"
+}

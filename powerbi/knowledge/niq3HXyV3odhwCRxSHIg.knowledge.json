@@ -1,0 +1,240 @@
+{
+  "dashboardName": "Ações de Conteúdo",
+  "generatedAt": "2026-04-29T14:34:27.780Z",
+  "dataSource": {
+    "type": "GoogleSheets",
+    "url": "https://docs.google.com/spreadsheets/d/1_qe6fIK09GaZOuUAheZzRM3uhBGJeHtPBufEy8LZmy4/edit?gid=553044125#gid=553044125"
+  },
+  "tables": [
+    {
+      "name": "fatAConteudo",
+      "columns": [
+        {
+          "name": "Exibição",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Cliente",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Tipo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Origem",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Vendedor",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Conteúdo Bruto",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "DeC",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Produção Plano",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Produção Real",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Desconto",
+          "dataType": "double",
+          "formatString": "#,0.00%;-#,0.00%;#,0.00%",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Conteudo Bruto Negociado",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Agência",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Conteúdo Líquido",
+          "dataType": "double",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Programa",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Index",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "PRAÇA",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Prog",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Apresentador",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Vinheta",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Comissão Apresentação",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Produto",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Cachê Apresentador",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Cobertura",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Líquido Faturado",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Dif Prod",
+      "table": "Medidas",
+      "expression": "CALCULATE(SUM(fatAConteudo[Produção Plano])) - CALCULATE(SUM(fatAConteudo[Produção Real]))",
+      "formatString": null
+    },
+    {
+      "name": "Desconto",
+      "table": "Medidas",
+      "expression": "-1*CALCULATE(SUM(fatAConteudo[Desconto]))",
+      "formatString": "0%;-0%;0%"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "fatAConteudo",
+      "fromColumn": "Exibição",
+      "toTable": "LocalDateTable_0ed2c133-099d-4aa4-acdb-eb0d515e8663",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "ReportSection82d28723e31f4082c4e4",
+      "name": "Home",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "ReportSection0064872cae382087bd79",
+      "name": "Daqui",
+      "hidden": false
+    },
+    {
+      "order": 3,
+      "id": "ReportSectionb8ae72df9a0d3a4e0e9c",
+      "name": "GE",
+      "hidden": false
+    },
+    {
+      "order": 4,
+      "id": "82628d2bcdcdf4ff8ba1",
+      "name": "Programas Especiais",
+      "hidden": false
+    },
+    {
+      "order": 5,
+      "id": "3d349f2b98c42402a536",
+      "name": "NEAR LIVE",
+      "hidden": false
+    },
+    {
+      "order": 6,
+      "id": "ReportSection4028130348050e36ba0d",
+      "name": "Clientes",
+      "hidden": false
+    },
+    {
+      "order": 7,
+      "id": "ReportSection171e873ebaa2355f5995",
+      "name": "Vendedores",
+      "hidden": false
+    },
+    {
+      "order": 8,
+      "id": "ReportSectionfd6b8c33a9e1c74722e1",
+      "name": "Apresentador",
+      "hidden": false
+    },
+    {
+      "order": 9,
+      "id": "ReportSection06250bef479bb3ebfd59",
+      "name": "Ação",
+      "hidden": true
+    }
+  ],
+  "datasetId": "2fac0598-8848-43a5-825f-4d77298a201c",
+  "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9"
+}

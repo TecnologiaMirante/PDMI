@@ -1,0 +1,402 @@
+{
+  "dashboardName": "Produção Comunicação",
+  "generatedAt": "2026-04-29T14:34:26.700Z",
+  "dataSource": {
+    "type": "GoogleSheets",
+    "url": "https://docs.google.com/spreadsheets/d/10ft36_Pk4HJfnHnBQYCbyPrg24zhghJWzgFA0fWhBds/edit#gid=854120859"
+  },
+  "tables": [
+    {
+      "name": "Atualização",
+      "columns": [
+        {
+          "name": "última atualização",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimCalendario",
+      "columns": [
+        {
+          "name": "Data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Ano",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Mes_num",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Nome_mes",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Mes_Abrev",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Mes_Ano",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Trimestre",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "TrimestreNome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimCalendarioAux",
+      "columns": [
+        {
+          "name": "Ano",
+          "dataType": "string",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "dimCampanhas",
+      "columns": [
+        {
+          "name": "ID",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "DEMANDA",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimCategoria",
+      "columns": [
+        {
+          "name": "CATEGORIA",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimMidia",
+      "columns": [
+        {
+          "name": "Midia",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Tipo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimTipo",
+      "columns": [
+        {
+          "name": "Tipo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Mídia",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimVeiculo",
+      "columns": [
+        {
+          "name": "VEÍCULO",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "ftCampanhas",
+      "columns": [
+        {
+          "name": "Data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "idCampanhas",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "idVeiculo",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "idCategoria",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "idMidia",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Quantidade",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Índice",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "Medidas",
+      "columns": [
+        {
+          "name": "Coluna 1",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "totalRealizado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "mediaMensal",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": null
+    },
+    {
+      "name": "mediaDiaria",
+      "table": "Medidas",
+      "expression": "divide(Medidas[mediaMensal], 22)",
+      "formatString": null
+    },
+    {
+      "name": "% crescimentoAtualPassado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "totalAcumulado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": null
+    },
+    {
+      "name": "% acumuladoAtualPassado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "totalRealizadoPassado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "totalAcumuladoPassado",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "quantRefacao",
+      "table": "Medidas",
+      "expression": "VAR result = calculate(sum(ftCampanhas[Quantidade]), FILTER(dimTipo, dimTipo[Tipo] = \"REFAÇÕES\"))",
+      "formatString": "0"
+    },
+    {
+      "name": "percRefacao",
+      "table": "Medidas",
+      "expression": "DIVIDE([quantRefacao], [totalRealizado], 0)",
+      "formatString": "0.0%;-0.0%;0.0%"
+    },
+    {
+      "name": "totalPossivel",
+      "table": "Medidas",
+      "expression": "[quantRefacao] + [totalRealizado]",
+      "formatString": "0"
+    },
+    {
+      "name": "distanciaTemporal",
+      "table": "Medidas",
+      "expression": "```",
+      "formatString": "0"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "dimCalendario",
+      "fromColumn": "Data",
+      "toTable": "LocalDateTable_04bf7b37-b332-4559-9f79-27fb17b4b487",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "idMidia",
+      "toTable": "dimMidia",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "Data",
+      "toTable": "dimCalendario",
+      "toColumn": "Data",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "idVeiculo",
+      "toTable": "dimVeiculo",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "idCampanhas",
+      "toTable": "dimCampanhas",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimTipo",
+      "fromColumn": "Mídia",
+      "toTable": "dimMidia",
+      "toColumn": "Midia",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "idCategoria",
+      "toTable": "dimCategoria",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "Atualização",
+      "fromColumn": "'última atualização'",
+      "toTable": "LocalDateTable_c68d5bf7-f324-4f39-a0f7-c14603451048",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "dimCalendarioAux",
+      "fromColumn": "Date",
+      "toTable": "LocalDateTable_d7000592-2799-40b6-aeee-6fc693269bc5",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "ftCampanhas",
+      "fromColumn": "Data",
+      "toTable": "dimCalendarioAux",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "ReportSection",
+      "name": "Geral",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "ReportSection38dc05466b2dc57ba967",
+      "name": "Crescimento",
+      "hidden": true
+    },
+    {
+      "order": 3,
+      "id": "ReportSection2e5698ecc6cf44ac0cef",
+      "name": "Demandas",
+      "hidden": true
+    }
+  ],
+  "datasetId": "eaa2d942-8174-443c-882a-b42a68e7fd10",
+  "workspaceId": "3f107ac2-e12e-4ba8-8305-f10f395da8fa"
+}

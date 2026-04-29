@@ -1,0 +1,406 @@
+{
+  "dashboardName": "Tecnologia",
+  "generatedAt": "2026-04-29T14:34:26.961Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "fatGLPI",
+      "columns": [
+        {
+          "name": "Title",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Status",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.1",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.2",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.3",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.4",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.5",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Category.6",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Open Date",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Close Date",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "fatGmail",
+      "columns": [
+        {
+          "name": "data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Total Sent Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Total Received Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Total Spam Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Email with Most Sent Emails",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Email with Most Received Emails",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Nome do Mês",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Total Unread Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "fatGmail7days",
+      "columns": [
+        {
+          "name": "Total Sent Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Total Received Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Total Spam Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Total Unread Emails",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Email with Most Sent Emails",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Email with Most Received Emails",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Number of Users",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Number of Active Users",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Number of Suspended Users",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "glpi-api",
+      "columns": [
+        {
+          "name": "Name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Extension",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Date accessed",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Date modified",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Date created",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Folder Path",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "medidasEmail",
+      "columns": [
+        {
+          "name": "Coluna 1",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "medidasGLPI",
+      "columns": [
+        {
+          "name": "Coluna 1",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "sumReceived",
+      "table": "medidasEmail",
+      "expression": "VAR UltimaData = MAX(fatGmail[data])",
+      "formatString": "#,0"
+    },
+    {
+      "name": "sumSent",
+      "table": "medidasEmail",
+      "expression": "VAR UltimaData = MAX(fatGmail[data])",
+      "formatString": "#,0"
+    },
+    {
+      "name": "sumSPAM",
+      "table": "medidasEmail",
+      "expression": "VAR UltimaData = MAX(fatGmail[data])",
+      "formatString": "#,0"
+    },
+    {
+      "name": "receivedLast7",
+      "table": "medidasEmail",
+      "expression": "CALCULATE(SUM(fatGmail7days[Total Received Emails]))",
+      "formatString": "#,0"
+    },
+    {
+      "name": "sentLast7",
+      "table": "medidasEmail",
+      "expression": "CALCULATE(SUM(fatGmail7days[Total Sent Emails]))",
+      "formatString": "#,0"
+    },
+    {
+      "name": "spamLast7",
+      "table": "medidasEmail",
+      "expression": "CALCULATE(SUM(fatGmail7days[Total Spam Emails]))",
+      "formatString": "#,0"
+    },
+    {
+      "name": "unreadLast7",
+      "table": "medidasEmail",
+      "expression": "CALCULATE(SUM(fatGmail7days[Total Unread Emails]))",
+      "formatString": "#,0"
+    },
+    {
+      "name": "sumUnread",
+      "table": "medidasEmail",
+      "expression": "VAR UltimaData = MAX(fatGmail[data])",
+      "formatString": "0"
+    },
+    {
+      "name": "countChamados",
+      "table": "medidasGLPI",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "Exibir SubCategoria1",
+      "table": "medidasGLPI",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "Exibir SubCategoria2",
+      "table": "medidasGLPI",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "Exibir SubCategoria3",
+      "table": "medidasGLPI",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "Exibir SubCategoria4",
+      "table": "medidasGLPI",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "countStatus_pastWeek",
+      "table": "medidasGLPI",
+      "expression": "VAR DataHoje = TODAY()",
+      "formatString": "0"
+    },
+    {
+      "name": "countStatus_7days",
+      "table": "medidasGLPI",
+      "expression": "```",
+      "formatString": "0"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "glpi-api",
+      "fromColumn": "'Date accessed'",
+      "toTable": "LocalDateTable_8017e04b-4ab2-4fc0-8325-1d5c53612788",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "glpi-api",
+      "fromColumn": "'Date modified'",
+      "toTable": "LocalDateTable_39817cff-a72e-4c8f-8bbd-0012882d0bb4",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "glpi-api",
+      "fromColumn": "'Date created'",
+      "toTable": "LocalDateTable_9d1c5519-4b35-426f-bad8-f6ed7b44463c",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "calendar",
+      "fromColumn": "Date",
+      "toTable": "LocalDateTable_120491a5-a0b7-49fa-9b75-97c1afb52910",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatGmail",
+      "fromColumn": "data",
+      "toTable": "calendar",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatGLPI",
+      "fromColumn": "'Open Date'",
+      "toTable": "LocalDateTable_0d35f628-9a8b-43e0-865c-f1f25fe0a5c4",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatGLPI",
+      "fromColumn": "'Close Date'",
+      "toTable": "LocalDateTable_7d682aa5-7c9f-4fa3-9446-8d5a0c3b1a6f",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "543b5a191e2ded000b90",
+      "name": "Gmail",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "5e623eb6928bc3ac6f67",
+      "name": "MiraHelp",
+      "hidden": false
+    }
+  ],
+  "datasetId": "6d506a05-a514-419c-b334-1abcd1d7284c",
+  "workspaceId": "776c0e3d-7378-4d72-a45e-996b9ce39a44"
+}
