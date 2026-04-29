@@ -1,0 +1,924 @@
+{
+  "dashboardName": "RD Station 3.0",
+  "generatedAt": "2026-04-29T14:34:27.946Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "dCalendario",
+      "columns": [
+        {
+          "name": "data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ano",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "mes",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome_mes",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome_mes_abrev",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "trimestre",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "semana_do_ano",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "dia_semana_num",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome_dia",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "ano_mes",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dCampanha",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dEtapa",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "apelido",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dFonte",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dMotivoPerda",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dOrganizacao",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "endereco",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "latitude",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "longitude",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "usuario_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dOrganizacaoSegmento",
+      "columns": [
+        {
+          "name": "organizacao_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "segmento_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dProduto",
+      "columns": [
+        {
+          "name": "product_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "descricao",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "preco_base",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dSegmento",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "integration_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "dUsuario",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "apelido",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "email",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "fContatosNegocio",
+      "columns": [
+        {
+          "name": "negocio_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "contato_nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "contato_cargo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "telefone",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "tipo_telefone",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "email_contato",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "fNegocioProdutos",
+      "columns": [
+        {
+          "name": "deal_product_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "negocio_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "product_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "preco",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "quantidade",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "quantidade_decimal",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "recorrencia",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "desconto",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "tipo_desconto",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "total",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "fNegócios",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "nome_negocio",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "valor_mensal",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "valor_unico",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "valor_total",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "data_previsao",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "markup",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "interacoes",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "markup_ultimas_atividades",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "criado_em",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "atualizado_em",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "rating",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "markup_criado",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "conteudo_ultima_atividade",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "usuario_alterado",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "hold",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ganho",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ultima_atividade_em",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "fechado_em",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "prazo_expirado",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "prazo_dias_expirado",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "prazo_data_expiracao",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "usuario_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "organizacao_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "etapa_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "fonte_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "campanha_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "motivo_perda_id",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "proxima_tarefa_data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "proxima_tarefa_assunto",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Status",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "Tipo Funil",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "Dias Em Aberto",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        },
+        {
+          "name": "Duracao Dias",
+          "dataType": "int64",
+          "formatString": null,
+          "summarizeBy": null
+        }
+      ]
+    },
+    {
+      "name": "response",
+      "columns": [
+        {
+          "name": "response",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Total Negociações",
+      "table": "_Medidas",
+      "expression": "COUNTROWS('fNegócios')",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Valor Carteira",
+      "table": "_Medidas",
+      "expression": "SUM('fNegócios'[valor_total])",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Negocios Ganhos Qtd",
+      "table": "_Medidas",
+      "expression": "CALCULATE(COUNTROWS('fNegócios'), 'fNegócios'[Status] = \"Ganho\")",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Valor Ganho",
+      "table": "_Medidas",
+      "expression": "CALCULATE(SUM('fNegócios'[valor_total]), 'fNegócios'[Status] = \"Ganho\")",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Negocios Perdidos Qtd",
+      "table": "_Medidas",
+      "expression": "CALCULATE(COUNTROWS('fNegócios'), 'fNegócios'[Status] = \"Perdido\")",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Valor Perdido",
+      "table": "_Medidas",
+      "expression": "CALCULATE(SUM('fNegócios'[valor_total]), 'fNegócios'[Status] = \"Perdido\")",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Em Aberto Qtd",
+      "table": "_Medidas",
+      "expression": "CALCULATE(COUNTROWS('fNegócios'), 'fNegócios'[Status] = \"Em Aberto\")",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Valor Em Aberto",
+      "table": "_Medidas",
+      "expression": "CALCULATE(SUM('fNegócios'[valor_total]), 'fNegócios'[Status] = \"Em Aberto\")",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Taxa Conversao",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Negocios Ganhos Qtd], [Total Negociações], 0)",
+      "formatString": "0.0%"
+    },
+    {
+      "name": "Ticket Medio",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Valor Carteira], [Total Negociações], 0)",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Ticket Medio Ganhos",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Valor Ganho], [Negocios Ganhos Qtd], 0)",
+      "formatString": "\"R$\" #,##0"
+    },
+    {
+      "name": "Abertas Mais 90 Dias",
+      "table": "_Medidas",
+      "expression": "CALCULATE(",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Duracao Media Dias",
+      "table": "_Medidas",
+      "expression": "AVERAGEX('fNegócios', 'fNegócios'[Duracao Dias])",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Duracao Media Ganhos",
+      "table": "_Medidas",
+      "expression": "CALCULATE(",
+      "formatString": "#,##0"
+    },
+    {
+      "name": "Pct Status Ganho",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Negocios Ganhos Qtd], [Total Negociações], 0) * 100",
+      "formatString": "0.0"
+    },
+    {
+      "name": "Pct Status Perdido",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Negocios Perdidos Qtd], [Total Negociações], 0) * 100",
+      "formatString": "0.0"
+    },
+    {
+      "name": "Pct Status Em Aberto",
+      "table": "_Medidas",
+      "expression": "DIVIDE([Em Aberto Qtd], [Total Negociações], 0) * 100",
+      "formatString": "0.0"
+    },
+    {
+      "name": "HTML Dashboard",
+      "table": "_Medidas",
+      "expression": "// Cada negocio: [status(1/0/-1), valor, ano, mes, vendedor, fonte, tipoFunil(G/P/M), etapa, segmento, produto]",
+      "formatString": null
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "usuario_id",
+      "toTable": "dUsuario",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "organizacao_id",
+      "toTable": "dOrganizacao",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "etapa_id",
+      "toTable": "dEtapa",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "fonte_id",
+      "toTable": "dFonte",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "campanha_id",
+      "toTable": "dCampanha",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "motivo_perda_id",
+      "toTable": "dMotivoPerda",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegocioProdutos",
+      "fromColumn": "negocio_id",
+      "toTable": "fNegócios",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegocioProdutos",
+      "fromColumn": "product_id",
+      "toTable": "dProduto",
+      "toColumn": "product_id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fContatosNegocio",
+      "fromColumn": "negocio_id",
+      "toTable": "fNegócios",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dOrganizacaoSegmento",
+      "fromColumn": "organizacao_id",
+      "toTable": "dOrganizacao",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dOrganizacaoSegmento",
+      "fromColumn": "segmento_id",
+      "toTable": "dSegmento",
+      "toColumn": "id",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "criado_em",
+      "toTable": "dCalendario",
+      "toColumn": "data",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "fechado_em",
+      "toTable": "dCalendario",
+      "toColumn": "data",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "ultima_atividade_em",
+      "toTable": "dCalendario",
+      "toColumn": "data",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "atualizado_em",
+      "toTable": "LocalDateTable_99abba27-6519-4abc-a357-2d5164a625ee",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "prazo_data_expiracao",
+      "toTable": "LocalDateTable_b012431c-1a19-4cb4-bed2-e7ff3340d968",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fNegócios",
+      "fromColumn": "proxima_tarefa_data",
+      "toTable": "LocalDateTable_7e1c7b07-f85c-4080-b80e-f1fe0a77aa0e",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "6ada7d774370836d3a4d",
+      "name": "Página 1",
+      "hidden": false
+    }
+  ],
+  "datasetId": null,
+  "workspaceId": null
+}

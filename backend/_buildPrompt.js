@@ -101,17 +101,18 @@ export function buildKnowledgeContext(knowledge) {
   }
 
   // ── Páginas ─────────────────────────────────────────────────────────────────
-  const visiblePages = (knowledge.pages ?? []).filter((p) => !p.hidden);
-  const hiddenPages  = (knowledge.pages ?? []).filter((p) =>  p.hidden);
+  const allPages     = knowledge.pages ?? [];
+  const visiblePages = allPages.filter((p) => !p.hidden);
+  const hiddenPages  = allPages.filter((p) =>  p.hidden);
 
-  if (visiblePages.length) {
-    lines.push("\nPÁGINAS DO RELATÓRIO (em ordem de exibição):");
-    for (const p of visiblePages) {
-      lines.push(`  ${p.order}. ${p.name}`);
+  if (allPages.length) {
+    lines.push("\nPÁGINAS DO RELATÓRIO:");
+    lines.push(`  Totais: total=${allPages.length} | visíveis=${visiblePages.length} | ocultas=${hiddenPages.length}`);
+    lines.push("  INSTRUÇÃO: Não recalcule totais de páginas; use os totais fornecidos acima. Liste todas as páginas abaixo sem omitir nenhuma.");
+    for (const p of allPages) {
+      const vis = p.hidden ? "[oculta]" : "[visível]";
+      lines.push(`  ${String(p.order).padStart(2)}. ${p.name} ${vis}`);
     }
-  }
-  if (hiddenPages.length) {
-    lines.push(`  [ocultas: ${hiddenPages.map((p) => p.name).join(", ")}]`);
   }
 
   lines.push("\n--- FIM DA ESTRUTURA ---");

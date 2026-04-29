@@ -1,5 +1,0 @@
-relationship c164ea72-8259-4274-8067-82aa6e4d46cc
-	joinOnDateBehavior: datePartOnly
-	fromColumn: fatAConteudo.Exibição
-	toColumn: LocalDateTable_0ed2c133-099d-4aa4-acdb-eb0d515e8663.Date
-

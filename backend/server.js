@@ -16,41 +16,79 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Knowledge registry ────────────────────────────────────────────────────────
-// MVP: único arquivo de conhecimento (acoes-de-conteudo).
-// Futuro: mapear dashboardId → arquivo JSON, bastando adicionar entradas ao mapa
-// e ajustar a lógica de seleção em loadKnowledge().
-//
-// Exemplo futuro:
-//   const KNOWLEDGE_MAP = {
-//     "abc123": "acoes-de-conteudo.knowledge.json",
-//     "def456": "outro-dashboard.knowledge.json",
-//   };
+// Carrega knowledge por dashboardId via index.json.
+// Fallback: acoes-de-conteudo.knowledge.json (compatibilidade com MVP).
 
-const KNOWLEDGE_DIR = path.join(__dirname, "../powerbi/knowledge");
-const knowledgeCache = new Map();
+const KNOWLEDGE_DIR    = path.join(__dirname, "../powerbi/knowledge");
+const KNOWLEDGE_FALLBACK = path.join(KNOWLEDGE_DIR, "acoes-de-conteudo.knowledge.json");
+const KNOWLEDGE_INDEX  = path.join(KNOWLEDGE_DIR, "index.json");
+const knowledgeCache   = new Map();  // dashboardId | "_default" | "_index" → valor
 
-function loadKnowledge(dashboardId = null) {
-  // MVP: ignora dashboardId e retorna o único arquivo disponível.
-  // Quando houver múltiplos dashboards, usar dashboardId como chave do mapa.
-  const cacheKey = dashboardId ?? "_default";
-  if (knowledgeCache.has(cacheKey)) return knowledgeCache.get(cacheKey);
+/** Retorna o index.json parseado (leitura única, fica em cache). */
+function loadIndex() {
+  if (knowledgeCache.has("_index")) return knowledgeCache.get("_index");
+  if (!fs.existsSync(KNOWLEDGE_INDEX)) {
+    knowledgeCache.set("_index", null);
+    return null;
+  }
+  try {
+    const index = JSON.parse(fs.readFileSync(KNOWLEDGE_INDEX, "utf8"));
+    knowledgeCache.set("_index", index);
+    return index;
+  } catch (err) {
+    console.warn(`[knowledge] falha ao ler index.json: ${err.message}`);
+    knowledgeCache.set("_index", null);
+    return null;
+  }
+}
 
-  const file = path.join(KNOWLEDGE_DIR, "acoes-de-conteudo.knowledge.json");
+/** Lê e cacheia um arquivo .knowledge.json pelo caminho absoluto. */
+function readKnowledgeFile(file, cacheKey) {
   if (!fs.existsSync(file)) {
-    console.warn(`[knowledge] arquivo não encontrado: ${file}`);
+    console.warn(`[knowledge] arquivo não encontrado: ${path.basename(file)}`);
     knowledgeCache.set(cacheKey, null);
     return null;
   }
   try {
     const knowledge = JSON.parse(fs.readFileSync(file, "utf8"));
     knowledgeCache.set(cacheKey, knowledge);
-    console.log(`[knowledge] carregado: ${path.basename(file)} (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
     return knowledge;
   } catch (err) {
-    console.warn(`[knowledge] falha ao carregar: ${err.message}`);
+    console.warn(`[knowledge] falha ao carregar ${path.basename(file)}: ${err.message}`);
     knowledgeCache.set(cacheKey, null);
     return null;
   }
+}
+
+function loadKnowledge(dashboardId = null) {
+  const cacheKey = dashboardId ?? "_default";
+  if (knowledgeCache.has(cacheKey)) return knowledgeCache.get(cacheKey);
+
+  // ── Resolução via index.json ────────────────────────────────────────────────
+  if (dashboardId) {
+    const index = loadIndex();
+    const entry = index?.dashboards?.find((d) => d.dashboardId === dashboardId);
+
+    if (entry?.knowledgeFile) {
+      const file = path.join(KNOWLEDGE_DIR, entry.knowledgeFile);
+      const knowledge = readKnowledgeFile(file, cacheKey);
+      if (knowledge) {
+        console.log(`[knowledge] dashboardId=${dashboardId} file=${entry.knowledgeFile} (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+        return knowledge;
+      }
+      // Arquivo listado no index mas ausente em disco → cai no fallback
+      console.warn(`[knowledge] dashboardId=${dashboardId} → ${entry.knowledgeFile} não encontrado em disco, usando fallback`);
+    } else {
+      console.warn(`[knowledge] dashboardId=${dashboardId} não encontrado no index.json, usando fallback`);
+    }
+  }
+
+  // ── Fallback: acoes-de-conteudo.knowledge.json ──────────────────────────────
+  const knowledge = readKnowledgeFile(KNOWLEDGE_FALLBACK, cacheKey);
+  if (knowledge) {
+    console.log(`[knowledge] dashboardId=${dashboardId ?? "null"} file=acoes-de-conteudo.knowledge.json [fallback] (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+  }
+  return knowledge;
 }
 
 // CORS: em produção, configurar CORS_ORIGIN com a URL do frontend no Render

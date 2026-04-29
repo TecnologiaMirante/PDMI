@@ -1,0 +1,425 @@
+{
+  "dashboardName": "DaybyDay - RádioFM",
+  "generatedAt": "2026-04-29T14:34:27.158Z",
+  "dataSource": {
+    "type": "GoogleSheets",
+    "url": "https://docs.google.com/spreadsheets/d/11Mbgmdp7gJhqjHief0Bu13vHf0I_ygakQApP5-HBGc4/edit#gid=1273512543"
+  },
+  "tables": [
+    {
+      "name": "dimCliente",
+      "columns": [
+        {
+          "name": "Patrocinador",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Segmento",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Índice",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimProjeto",
+      "columns": [
+        {
+          "name": "Nome",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Dia",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Exibição",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Horário",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Prazo",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "N Cotas",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Valor Bruto",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "ID",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID Tipo",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Valor possível",
+          "dataType": "string",
+          "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Data",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Valor Produção",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Valor Mídia",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Valor líquido possível",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimTipo",
+      "columns": [
+        {
+          "name": "ID",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Tabela",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "fatCotas",
+      "columns": [
+        {
+          "name": "Valor Fechado",
+          "dataType": "int64",
+          "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Vencimento",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID Cliente",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ID Tipo",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "dimProjeto.Valor Bruto",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Aux",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Cliente",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Desconto",
+          "dataType": "string",
+          "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "MÊS",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "dimProjeto.Valor Produção",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "dimProjeto.Valor Mídia",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        }
+      ]
+    },
+    {
+      "name": "Fonte",
+      "columns": [
+        {
+          "name": "name",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "SheetorRangeId",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ItemKind",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "ItemName",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "IsLeaf",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Q CotasVendidas",
+      "table": "dimTipo",
+      "expression": "CALCULATE(COUNT(fatCotas[ID Cliente]))",
+      "formatString": "0"
+    },
+    {
+      "name": "Q CotasTotal",
+      "table": "dimTipo",
+      "expression": "CALCULATE(SUM(dimProjeto[N Cotas]))",
+      "formatString": "0"
+    },
+    {
+      "name": "Valor cota",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "Valor fechado",
+      "table": "dimTipo",
+      "expression": "VAR resultado = CALCULATE(SUM(fatCotas[Valor Fechado]))",
+      "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0"
+    },
+    {
+      "name": "V GAP",
+      "table": "dimTipo",
+      "expression": "CALCULATE(sum(dimProjeto[Valor possível])-[Valor fechado])",
+      "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0"
+    },
+    {
+      "name": "N Projeto",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Patrocinador",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Segmento",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Data",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Prazo",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Exibição",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Dia",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "N Horario",
+      "table": "dimTipo",
+      "expression": "IF(",
+      "formatString": null
+    },
+    {
+      "name": "DM2",
+      "table": "dimTipo",
+      "expression": "([Valor fechado] - CALCULATE(sum(dimProjeto[Valor Bruto])))/CALCULATE(COUNT(fatCotas[Valor Fechado]))",
+      "formatString": null
+    },
+    {
+      "name": "Desconto",
+      "table": "dimTipo",
+      "expression": "CALCULATE(SUM(fatCotas[dimProjeto.Valor Bruto])) - [Valor fechado]",
+      "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0"
+    },
+    {
+      "name": "Desconto médio",
+      "table": "dimTipo",
+      "expression": "CALCULATE(SUM(fatCotas[Desconto])/CALCULATE(COUNT(fatCotas[Valor Fechado])))",
+      "formatString": "\"R$\"\\ #,0;-\"R$\"\\ #,0;\"R$\"\\ #,0"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "fatCotas",
+      "fromColumn": "ID",
+      "toTable": "dimProjeto",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatCotas",
+      "fromColumn": "'ID Cliente'",
+      "toTable": "dimCliente",
+      "toColumn": "Índice",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimProjeto",
+      "fromColumn": "'ID Tipo'",
+      "toTable": "dimTipo",
+      "toColumn": "ID",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatCotas",
+      "fromColumn": "Vencimento",
+      "toTable": "LocalDateTable_bdef745f-0afe-4722-8c64-03e3aaf2b4cb",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "ReportSection",
+      "name": "Painel",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "ReportSection605079ea76e17bc3481e",
+      "name": "Oportunidades Comerciais",
+      "hidden": false
+    },
+    {
+      "order": 3,
+      "id": "ReportSection2c5ec62dd61d4b157600",
+      "name": "Patrocínio Programas",
+      "hidden": false
+    },
+    {
+      "order": 4,
+      "id": "ReportSectionadfffba03743ca2140de",
+      "name": "Programas Especiais",
+      "hidden": false
+    },
+    {
+      "order": 5,
+      "id": "ReportSection0c32059328c730e4d080",
+      "name": "Projetos Arena",
+      "hidden": false
+    },
+    {
+      "order": 6,
+      "id": "ReportSectionf8da700d1dd385d4ae70",
+      "name": "Flashes",
+      "hidden": false
+    },
+    {
+      "order": 7,
+      "id": "ReportSectiona4c6ce5c4320a750b000",
+      "name": "Cliente",
+      "hidden": false
+    }
+  ],
+  "datasetId": "c1930752-d29f-4a8e-b00d-0349e8c24d55",
+  "workspaceId": "3f107ac2-e12e-4ba8-8305-f10f395da8fa"
+}
