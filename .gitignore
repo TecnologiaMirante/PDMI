@@ -27,3 +27,30 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ── Power BI — arquivos fonte e binários ──────────────────────────────────────
+# Os arquivos PBIP ficam no servidor de rede, não no repositório.
+# Apenas powerbi/knowledge/*.json deve subir.
+
+# Binários Power BI
+powerbi/**/*.pbix
+powerbi/**/*.abf
+
+# Arquivos de projeto PBIP
+powerbi/**/*.pbip
+powerbi/**/*.pbism
+powerbi/**/*.pbir
+
+# Pastas de modelo e relatório geradas pelo Power BI Desktop
+powerbi/**/*.SemanticModel/
+powerbi/**/*.Report/
+
+# Exceção explícita: knowledge JSONs devem subir
+!powerbi/knowledge/
+!powerbi/knowledge/**
+
+# ── Credenciais ───────────────────────────────────────────────────────────────
+serviceAccount.json
+*serviceAccount*.json
+*service-account*.json
+*service_account*.json

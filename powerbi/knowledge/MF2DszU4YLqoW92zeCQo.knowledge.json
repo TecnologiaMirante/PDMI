@@ -1,0 +1,271 @@
+{
+  "dashboardName": "GloboSpot",
+  "generatedAt": "2026-04-29T14:34:27.041Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "GloboSpot",
+      "columns": [
+        {
+          "name": "dt_original_format",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "qt_unique_devices_spot_por_emissora",
+          "dataType": "int64",
+          "formatString": "#,0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "Data",
+          "dataType": "dateTime",
+          "formatString": "Short Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "HoraMinuto",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "programa",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "emissora",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Turno",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Emissora Res",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "incidents",
+      "columns": [
+        {
+          "name": "id",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "dateTime",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "incidentType",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "description",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "userName",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Data",
+          "dataType": "dateTime",
+          "formatString": "Long Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Hora",
+          "dataType": "dateTime",
+          "formatString": "Long Time",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "horaInicio",
+          "dataType": "dateTime",
+          "formatString": "Long Time",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "horaFim",
+          "dataType": "dateTime",
+          "formatString": "Long Time",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "DataHoraInicio",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "DataHoraFim",
+          "dataType": "dateTime",
+          "formatString": "General Date",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "Programas",
+      "columns": [
+        {
+          "name": "Programa",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "Abrev",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Total_TVs_Por_Mes",
+      "table": "GloboSpot",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "Pico_Audiencia",
+      "table": "GloboSpot",
+      "expression": "CALCULATE(",
+      "formatString": "0"
+    },
+    {
+      "name": "Total_Audiencia",
+      "table": "GloboSpot",
+      "expression": "CALCULATE(",
+      "formatString": "0"
+    },
+    {
+      "name": "Horario_Pico",
+      "table": "GloboSpot",
+      "expression": "VAR MaxValor = [Pico_Audiencia]",
+      "formatString": null
+    },
+    {
+      "name": "Top_Emissora",
+      "table": "GloboSpot",
+      "expression": "```",
+      "formatString": null
+    },
+    {
+      "name": "Audiencia Media",
+      "table": "GloboSpot",
+      "expression": "```",
+      "formatString": null
+    },
+    {
+      "name": "Audiencia Total",
+      "table": "GloboSpot",
+      "expression": "SUM('GloboSpot'[qt_unique_devices_spot_por_emissora])",
+      "formatString": "0"
+    },
+    {
+      "name": "Pico de Audiencia",
+      "table": "GloboSpot",
+      "expression": "MAX('GloboSpot'[qt_unique_devices_spot_por_emissora])",
+      "formatString": "0"
+    },
+    {
+      "name": "Ranking Programas",
+      "table": "GloboSpot",
+      "expression": "```",
+      "formatString": "0"
+    },
+    {
+      "name": "Total de Incidentes",
+      "table": "incidents",
+      "expression": "COUNTROWS('incidents')",
+      "formatString": "0"
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "GloboSpot",
+      "fromColumn": "dt_original_format",
+      "toTable": "LocalDateTable_9e0b0993-7396-45c0-9509-ec763f5b3a4d",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "GloboSpot",
+      "fromColumn": "programa",
+      "toTable": "Programas",
+      "toColumn": "Programa",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "GloboSpot",
+      "fromColumn": "Data",
+      "toTable": "LocalDateTable_633a2fa3-62c3-4e02-8e23-222fbb8a3e0b",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "incidents",
+      "fromColumn": "dateTime",
+      "toTable": "LocalDateTable_d656cb92-6996-4ad4-be19-ad025ab53e38",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "incidents",
+      "fromColumn": "Data",
+      "toTable": "LocalDateTable_7c7452b3-12b4-4f38-9156-0dba678fd654",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "incidents",
+      "fromColumn": "DataHoraInicio",
+      "toTable": "LocalDateTable_0b077363-91be-4032-83e0-655c00e92ab2",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "incidents",
+      "fromColumn": "DataHoraFim",
+      "toTable": "LocalDateTable_2f2133a5-b484-4144-b77d-588f0c823a8e",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "3586303eee637ad2b5d7",
+      "name": "Duplicata de Minuto à Minuto",
+      "hidden": false
+    }
+  ],
+  "datasetId": "2c9e0348-9d90-4314-8726-72c0155f1483",
+  "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9"
+}

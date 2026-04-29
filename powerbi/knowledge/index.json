@@ -1,0 +1,162 @@
+{
+  "generatedAt": "2026-04-29T14:34:28.311Z",
+  "dashboards": [
+    {
+      "dashboardId": "niq3HXyV3odhwCRxSHIg",
+      "dashboardName": "Ações de Conteúdo",
+      "slug": "acoes-de-conteudo",
+      "knowledgeFile": "niq3HXyV3odhwCRxSHIg.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Ações de Conteúdo",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Ações de Conteúdo\\Ações de Conteúdo.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Ações de Conteúdo\\Ações de Conteúdo.Report\\definition",
+      "datasetId": "2fac0598-8848-43a5-825f-4d77298a201c",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:27.780Z"
+    },
+    {
+      "dashboardId": "9krtwoZQ699szkTEpY8V",
+      "dashboardName": "Produção Comunicação",
+      "slug": "producao-comunicacao",
+      "knowledgeFile": "9krtwoZQ699szkTEpY8V.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Produção Comunicação",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Produção Comunicação\\Produção Comunicação.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Produção Comunicação\\Produção Comunicação.Report\\definition",
+      "datasetId": "eaa2d942-8174-443c-882a-b42a68e7fd10",
+      "workspaceId": "3f107ac2-e12e-4ba8-8305-f10f395da8fa",
+      "generatedAt": "2026-04-29T14:34:26.700Z"
+    },
+    {
+      "dashboardId": "BBSIcIIYw8PSC8Ep33Nn",
+      "dashboardName": "RD Station",
+      "slug": "rd-station",
+      "knowledgeFile": "BBSIcIIYw8PSC8Ep33Nn.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station\\RD Station.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station\\RD Station.Report\\definition",
+      "datasetId": "6a689255-30aa-44ed-9fed-046e922cbb42",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:26.852Z"
+    },
+    {
+      "dashboardId": "Hn4LbpxbUeeqBdex9K59",
+      "dashboardName": "Tecnologia",
+      "slug": "tecnologia",
+      "knowledgeFile": "Hn4LbpxbUeeqBdex9K59.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Tecnologia\\Tecnologia",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Tecnologia\\Tecnologia\\Tecnologia.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Tecnologia\\Tecnologia\\Tecnologia.Report\\definition",
+      "datasetId": "6d506a05-a514-419c-b334-1abcd1d7284c",
+      "workspaceId": "776c0e3d-7378-4d72-a45e-996b9ce39a44",
+      "generatedAt": "2026-04-29T14:34:26.961Z"
+    },
+    {
+      "dashboardId": "MF2DszU4YLqoW92zeCQo",
+      "dashboardName": "GloboSpot",
+      "slug": "globospot",
+      "knowledgeFile": "MF2DszU4YLqoW92zeCQo.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\GloboSpot",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\GloboSpot\\GloboSpot.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\GloboSpot\\GloboSpot.Report\\definition",
+      "datasetId": "2c9e0348-9d90-4314-8726-72c0155f1483",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:27.041Z"
+    },
+    {
+      "dashboardId": "SQxAMW3MWq69dXcFglFf",
+      "dashboardName": "DaybyDay - RádioFM",
+      "slug": "daybyday-radiofm",
+      "knowledgeFile": "SQxAMW3MWq69dXcFglFf.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - RádioFM",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - RádioFM\\DaybyDay - RádioFM.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - RádioFM\\DaybyDay - RádioFM.Report\\definition",
+      "datasetId": "c1930752-d29f-4a8e-b00d-0349e8c24d55",
+      "workspaceId": "3f107ac2-e12e-4ba8-8305-f10f395da8fa",
+      "generatedAt": "2026-04-29T14:34:27.158Z"
+    },
+    {
+      "dashboardId": "TFV6Azl3eHyljp9gfEqK",
+      "dashboardName": "RD Station 2.0",
+      "slug": "rd-station-2-0",
+      "knowledgeFile": "TFV6Azl3eHyljp9gfEqK.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 2.0",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 2.0\\RD Station 2.0.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 2.0\\RD Station 2.0.Report\\definition",
+      "datasetId": "047595af-0308-499c-8f06-a09566ebf744",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:27.330Z"
+    },
+    {
+      "dashboardId": "cH8vRDMdxrCq8coT1ztx",
+      "dashboardName": "SISCOM",
+      "slug": "siscom",
+      "knowledgeFile": "cH8vRDMdxrCq8coT1ztx.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM\\SISCOM.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM\\SISCOM.Report\\definition",
+      "datasetId": "d9642da6-d593-46c3-8cc2-8b945e099d8c",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:27.417Z"
+    },
+    {
+      "dashboardId": "jH955b9FrdZ0UFjdyiMO",
+      "dashboardName": "Indicadores Portal",
+      "slug": "indicadores-portal",
+      "knowledgeFile": "jH955b9FrdZ0UFjdyiMO.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Indicadores Portal",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Indicadores Portal\\Indicadores Portal.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\Indicadores Portal\\Indicadores Portal.Report\\definition",
+      "datasetId": "b01bcce9-ce63-4d1a-a636-efdb53b79891",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:27.632Z"
+    },
+    {
+      "dashboardId": "qDyhWUkAT9TA9EwnjmVq",
+      "dashboardName": "RD Station 3.0",
+      "slug": "rd-station-3-0",
+      "knowledgeFile": "qDyhWUkAT9TA9EwnjmVq.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 3.0",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 3.0\\RD Station 3.0.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\RD Station 3.0\\RD Station 3.0.Report\\definition",
+      "datasetId": null,
+      "workspaceId": null,
+      "generatedAt": "2026-04-29T14:34:27.946Z"
+    },
+    {
+      "dashboardId": "rNVHCJGG0MI1su6dOKY6",
+      "dashboardName": "SISCOM Exibidora",
+      "slug": "siscom-exibidora",
+      "knowledgeFile": "rNVHCJGG0MI1su6dOKY6.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM Exibidora",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM Exibidora\\SISCOM Exibidora.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Comercial\\SISCOM Exibidora\\SISCOM Exibidora.Report\\definition",
+      "datasetId": "1eb0ffe5-5a5b-4ad7-a33a-2a5480d97e02",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:28.049Z"
+    },
+    {
+      "dashboardId": "thBIasGXOemSLw2gsyST",
+      "dashboardName": "Afilidata",
+      "slug": "afilidata",
+      "knowledgeFile": "thBIasGXOemSLw2gsyST.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Afilidata",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Afilidata\\Afilidata.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\Afilidata\\Afilidata.Report\\definition",
+      "datasetId": "e49d0a06-f1df-4560-a501-cab1be848cc7",
+      "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9",
+      "generatedAt": "2026-04-29T14:34:28.194Z"
+    },
+    {
+      "dashboardId": "zBIqp38BTZymHRnMr3lC",
+      "dashboardName": "DaybyDay - Imirante",
+      "slug": "daybyday-imirante",
+      "knowledgeFile": "zBIqp38BTZymHRnMr3lC.knowledge.json",
+      "sourcePath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - Imirante",
+      "semanticModelPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - Imirante\\DaybyDay - Imirante.SemanticModel\\definition",
+      "reportPath": "\\\\munique\\Bonn\\Arquivos BI\\Marketing\\DaybyDay - Imirante\\DaybyDay - Imirante.Report\\definition",
+      "datasetId": "7b05ac03-79b4-41f4-a1c6-21f87d3e65d7",
+      "workspaceId": "3f107ac2-e12e-4ba8-8305-f10f395da8fa",
+      "generatedAt": "2026-04-29T14:34:28.307Z"
+    }
+  ],
+  "skipped": []
+}

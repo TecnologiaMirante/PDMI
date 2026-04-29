@@ -259,6 +259,7 @@ export default function FloatingChatWidget({
         body: JSON.stringify({
           messages: apiMessages,
           context: {
+            dashboardId,
             titulo: dashboard.titulo,
             descricao: dashboard.descricao || "",
             sectorName: sectorName || "",
@@ -425,8 +426,8 @@ export default function FloatingChatWidget({
   };
 
   const panelSize = isExpanded
-    ? "sm:w-[620px] sm:h-[840px] h-[90dvh]"
-    : "sm:w-96 sm:h-[580px] h-[520px]";
+    ? "sm:w-[620px] sm:h-[min(840px,90dvh)] h-[95dvh]"
+    : "sm:w-96 sm:h-[min(580px,85dvh)] h-[min(520px,80dvh)]";
 
   return (
     <>

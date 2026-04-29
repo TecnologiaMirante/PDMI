@@ -1,0 +1,219 @@
+{
+  "dashboardName": "SISCOM Exibidora",
+  "generatedAt": "2026-04-29T14:34:28.049Z",
+  "dataSource": null,
+  "tables": [
+    {
+      "name": "dimExibidora",
+      "columns": [
+        {
+          "name": "id_Exibidora",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "CD_EXIBIDORA",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "dimTipo",
+      "columns": [
+        {
+          "name": "TIPO",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "none"
+        },
+        {
+          "name": "id_Tipo",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "fatExibidora",
+      "columns": [
+        {
+          "name": "CD_DATA_COMPET",
+          "dataType": "dateTime",
+          "formatString": "mmmm\" de \"yyyy",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "id_Exibidora",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        },
+        {
+          "name": "VL_LIQUIDO",
+          "dataType": "double",
+          "formatString": null,
+          "summarizeBy": "sum"
+        },
+        {
+          "name": "id_Tipo",
+          "dataType": "int64",
+          "formatString": "0",
+          "summarizeBy": "none"
+        }
+      ]
+    },
+    {
+      "name": "SpotMedidas",
+      "columns": [
+        {
+          "name": "Coluna",
+          "dataType": "string",
+          "formatString": null,
+          "summarizeBy": "sum"
+        }
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "Real sobre projetado",
+      "table": "'Medidas Meta'",
+      "expression": "VAR real = CALCULATE([G ValorTotal])",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "auxMeta",
+      "table": "'Medidas Meta'",
+      "expression": "1",
+      "formatString": "0"
+    },
+    {
+      "name": "G ValorTotal",
+      "table": "SpotMedidas",
+      "expression": "SUM(fatExibidora[VL_LIQUIDO])",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "K ValorTotalMeta 20%",
+      "table": "SpotMedidas",
+      "expression": "CALCULATE([G ValorTotal Comparativo]*0.2)",
+      "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+    },
+    {
+      "name": "K ValorTotalMeta 80%",
+      "table": "SpotMedidas",
+      "expression": "CALCULATE([G ValorTotal Comparativo]*0.8)",
+      "formatString": null
+    },
+    {
+      "name": "G ValorTotal Passado",
+      "table": "SpotMedidas",
+      "expression": "CALCULATE([G ValorTotal],SAMEPERIODLASTYEAR(dimCalendar[Date]))",
+      "formatString": "\"R$\"#,0.00;-\"R$\"#,0.00;\"R$\"#,0.00"
+    },
+    {
+      "name": "G Porcentagem",
+      "table": "SpotMedidas",
+      "expression": "[G ValorTotal]/[G ValorTotal Comparativo]",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "T Variação Individual/Total",
+      "table": "SpotMedidas",
+      "expression": "[T Individual/Total Individual]*[G ValorTotal Passado]/[G ValorTotal ALL]",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "G ValorTotal ALL",
+      "table": "SpotMedidas",
+      "expression": "CALCULATE(SUM(fatExibidora[VL_LIQUIDO]), all(dimExibidora[CD_EXIBIDORA]), FILTER(dimTipo, dimTipo[id_Tipo]<=3), all(dimTipo[TIPO]))",
+      "formatString": "\"R$\"\\ #,0.00;-\"R$\"\\ #,0.00;\"R$\"\\ #,0.00"
+    },
+    {
+      "name": "T Individual/Total",
+      "table": "SpotMedidas",
+      "expression": "[G ValorTotal]/[G ValorTotal ALL]",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "T Individual/Total Individual",
+      "table": "SpotMedidas",
+      "expression": "DIVIDE([G ValorTotal], [G ValorTotal Passado], 0)-1",
+      "formatString": "0.00%;-0.00%;0.00%"
+    },
+    {
+      "name": "G ValorTotal Comparativo",
+      "table": "SpotMedidas",
+      "expression": "IF(AND(sum(dimCalendar[Date].[MonthNo]) >=4, sum(dimCalendar[Date].[Ano]) = 2021), [G ValorTotal 2anos], [G ValorTotal Passado])",
+      "formatString": "0"
+    },
+    {
+      "name": "G ValorTotal 2anos",
+      "table": "SpotMedidas",
+      "expression": "CALCULATE([G ValorTotal],DATEADD(dimCalendar[Date], -2, YEAR))",
+      "formatString": null
+    }
+  ],
+  "relationships": [
+    {
+      "fromTable": "fatExibidora",
+      "fromColumn": "id_Exibidora",
+      "toTable": "dimExibidora",
+      "toColumn": "id_Exibidora",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "fatExibidora",
+      "fromColumn": "id_Tipo",
+      "toTable": "dimTipo",
+      "toColumn": "id_Tipo",
+      "joinOnDateBehavior": null
+    },
+    {
+      "fromTable": "dimCalendar",
+      "fromColumn": "Date",
+      "toTable": "LocalDateTable_78ac67ab-44ca-4410-b383-06f99599b857",
+      "toColumn": "Date",
+      "joinOnDateBehavior": "datePartOnly"
+    },
+    {
+      "fromTable": "fatExibidora",
+      "fromColumn": "CD_DATA_COMPET",
+      "toTable": "dimCalendar",
+      "toColumn": "Date",
+      "joinOnDateBehavior": null
+    }
+  ],
+  "pages": [
+    {
+      "order": 1,
+      "id": "ReportSectionca486fa089e30a445e73",
+      "name": "Resumo",
+      "hidden": false
+    },
+    {
+      "order": 2,
+      "id": "ReportSectionc353e04ad1e1cb78f2e3",
+      "name": "KPI",
+      "hidden": false
+    },
+    {
+      "order": 3,
+      "id": "ReportSection1e6b7b9d330a570377e2",
+      "name": "Histórico",
+      "hidden": false
+    },
+    {
+      "order": 4,
+      "id": "ReportSection80dbb01e971688ca10b8",
+      "name": "Tabela",
+      "hidden": true
+    }
+  ],
+  "datasetId": "1eb0ffe5-5a5b-4ad7-a33a-2a5480d97e02",
+  "workspaceId": "dec38364-f9b9-4aa3-9f4f-178cf7deb4f9"
+}
