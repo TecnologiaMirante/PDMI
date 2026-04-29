@@ -1,18 +1,18 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Bot,
   ChevronDown,
   Send,
   Loader2,
   User,
   Database,
-  ArrowUp,
+  ArrowDown,
   Copy,
   Check,
   Maximize2,
   Minimize2,
   Trash2,
 } from "lucide-react";
+import iconMara from "@/assets/iconMara.png";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -73,6 +73,8 @@ export default function FloatingChatWidget({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  // "closed" | "opening" | "open" | "closing"
+  const [panelState, setPanelState] = useState("closed");
   const { user } = useAuth();
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
@@ -88,6 +90,21 @@ export default function FloatingChatWidget({
     setSnapshotStatus("idle");
   }, [dashboardId]);
 
+  // Gerencia o ciclo de animação via state machine:
+  // closed → opening (monta + anima entrada) → open
+  // open → closing (anima saída) → closed (desmonta)
+  useEffect(() => {
+    if (isOpen) {
+      setPanelState((prev) =>
+        prev === "closed" ? "opening" : prev
+      );
+    } else {
+      setPanelState((prev) =>
+        prev === "open" || prev === "opening" ? "closing" : prev
+      );
+    }
+  }, [isOpen]);
+
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
@@ -100,7 +117,8 @@ export default function FloatingChatWidget({
 
   const [copied, setCopied] = useState(null);
   const [copiedMode, setCopiedMode] = useState(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const isNearBottomRef = useRef(true);
 
   const messagesContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -171,9 +189,29 @@ export default function FloatingChatWidget({
     saveChatHistory(user.uid, dashboardId, messages);
   }, [messages, dashboardId, isStreaming, user?.uid, historyLoaded]);
 
+  // Auto-scroll para o final apenas quando o usuário já está perto do fim
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, streamingContent]);
+
+  // Ao abrir o chat ou terminar de carregar o histórico: salta direto para o final
+  useEffect(() => {
+    if (!isOpen) {
+      isNearBottomRef.current = true;
+      return;
+    }
+    const raf = requestAnimationFrame(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop =
+          messagesContainerRef.current.scrollHeight;
+        isNearBottomRef.current = true;
+        setShowScrollBottom(false);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen, historyLoaded]);
 
   const clearHistory = () => {
     setMessages([INITIAL_MESSAGE]);
@@ -183,11 +221,24 @@ export default function FloatingChatWidget({
     setClearDialogOpen(false);
   };
 
-  const handleMessagesScroll = (e) =>
-    setShowScrollTop(e.currentTarget.scrollTop > 150);
+  const handleMessagesScroll = (e) => {
+    const el = e.currentTarget;
+    const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const nearBottom = distFromBottom < 80;
+    isNearBottomRef.current = nearBottom;
+    setShowScrollBottom(!nearBottom);
+  };
 
-  const scrollToTop = () =>
-    messagesContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+      isNearBottomRef.current = true;
+      setShowScrollBottom(false);
+    }
+  };
 
   const handleCopy = async (content, index, mode) => {
     if (!content) return;
@@ -365,7 +416,7 @@ export default function FloatingChatWidget({
   const handleClose = () => {
     abortRef.current?.abort();
     setIsOpen(false);
-    setIsExpanded(false);
+    // panelState vai para "closing" → onAnimationEnd completa o ciclo
   };
 
   const snapshotLabel = {
@@ -432,29 +483,40 @@ export default function FloatingChatWidget({
   return (
     <>
       {/* Botão flutuante de abrir */}
-      {!isOpen && (
+      {panelState === "closed" && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-full shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-full shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200"
           aria-label="Abrir Analista BI"
         >
-          <Bot className="size-5" />
+          <img src={iconMara} alt="Mara" className="size-7 object-cover rounded-full shrink-0" />
           <span className="text-sm font-semibold">Analista BI</span>
         </button>
       )}
 
-      {/* Painel do chat */}
-      {isOpen && (
+      {/* Painel do chat — montado durante opening/open/closing, animado via keyframes */}
+      {panelState !== "closed" && (
         <div
-          className={`fixed bottom-0 right-0 z-50 flex flex-col w-full sm:bottom-6 sm:right-6 bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden transition-all duration-300 ${panelSize}`}
+          onAnimationEnd={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (e.animationName === "chat-in") setPanelState("open");
+            if (e.animationName === "chat-out") {
+              setPanelState("closed");
+              setIsExpanded(false);
+            }
+          }}
+          className={`fixed bottom-0 right-0 z-50 flex flex-col w-full sm:bottom-6 sm:right-6 bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden origin-bottom-right chat-resize
+            ${panelState === "opening" ? "chat-enter" : ""}
+            ${panelState === "closing" ? "chat-exit" : ""}
+            ${panelSize}`}
         >
           {/* Header com gradiente */}
           <div className="relative flex items-center gap-3 px-4 py-3.5 bg-linear-to-br from-primary via-primary to-primary/90 text-primary-foreground shrink-0">
             {/* Reflexo sutil no topo do header */}
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
 
-            <div className="w-8 h-8 rounded-full bg-white/15 ring-1 ring-white/20 flex items-center justify-center shrink-0">
-              <Bot className="size-4" />
+            <div className="w-8 h-8 rounded-full ring-1 ring-white/20 shrink-0 overflow-hidden">
+              <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -553,8 +615,8 @@ export default function FloatingChatWidget({
                   return (
                     <div key={i} className="flex justify-center pt-2 pb-1">
                       <div className="max-w-[88%] flex flex-col items-center gap-2 bg-muted/50 border border-border/60 rounded-2xl px-5 py-4 text-center shadow-sm">
-                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Bot className="size-4 text-primary" />
+                        <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-primary/20">
+                          <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {msg.content}
@@ -572,14 +634,14 @@ export default function FloatingChatWidget({
                     >
                       {/* Avatar */}
                       <div
-                        className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center ring-1 ${
+                        className={`w-7 h-7 rounded-full shrink-0 overflow-hidden ring-1 ${
                           isAssistant
-                            ? "bg-primary text-primary-foreground ring-primary/30"
-                            : "bg-secondary text-secondary-foreground ring-border/40"
+                            ? "ring-primary/30"
+                            : "flex items-center justify-center bg-secondary text-secondary-foreground ring-border/40"
                         }`}
                       >
                         {isAssistant ? (
-                          <Bot className="size-3.5" />
+                          <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
                         ) : user?.picture ? (
                           <img
                             src={user.picture}
@@ -650,24 +712,28 @@ export default function FloatingChatWidget({
                             ? "Copiado!"
                             : "Copiar mensagem"}
                         </button>
-                        <span className="text-muted-foreground/40 text-[11px] select-none">
-                          ·
-                        </span>
-                        <button
-                          onClick={() =>
-                            handleCopy(displayContent, i, "markdown")
-                          }
-                          className="cursor-pointer flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          {copied === i && copiedMode === "markdown" ? (
-                            <Check className="size-3 text-green-500" />
-                          ) : (
-                            <Copy className="size-3" />
-                          )}
-                          {copied === i && copiedMode === "markdown"
-                            ? "Copiado!"
-                            : "Copiar como markdown"}
-                        </button>
+                        {isAssistant && (
+                          <>
+                            <span className="text-muted-foreground/40 text-[11px] select-none">
+                              ·
+                            </span>
+                            <button
+                              onClick={() =>
+                                handleCopy(displayContent, i, "markdown")
+                              }
+                              className="cursor-pointer flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              {copied === i && copiedMode === "markdown" ? (
+                                <Check className="size-3 text-green-500" />
+                              ) : (
+                                <Copy className="size-3" />
+                              )}
+                              {copied === i && copiedMode === "markdown"
+                                ? "Copiado!"
+                                : "Copiar como markdown"}
+                            </button>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -676,14 +742,14 @@ export default function FloatingChatWidget({
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Botão ir ao topo */}
-            {showScrollTop && (
+            {/* Botão ir ao final */}
+            {showScrollBottom && (
               <button
-                onClick={scrollToTop}
+                onClick={scrollToBottom}
                 className="absolute bottom-3 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-card border border-border/60 shadow-md text-muted-foreground hover:text-foreground hover:shadow-lg transition-all z-10"
-                aria-label="Ir ao topo"
+                aria-label="Ir ao final"
               >
-                <ArrowUp className="size-4" />
+                <ArrowDown className="size-4" />
               </button>
             )}
           </div>

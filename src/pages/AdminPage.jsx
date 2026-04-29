@@ -81,23 +81,23 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
-      <nav className="flex items-center gap-4 px-4 md:px-6 py-4 shadow-sm bg-card border-b border-border">
+      <nav className="flex items-center gap-4 px-4 md:px-6 py-4 shadow-nav" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/home")}
-          className="gap-1 text-primary"
+          className="gap-1 text-white/90 hover:text-white hover:bg-white/10"
         >
           <ChevronLeft className="size-4" />
           Voltar
         </Button>
-        <h1 className="text-lg font-bold text-foreground hidden md:block">
+        <h1 className="text-lg font-bold text-white hidden md:block">
           Painel de Administração
         </h1>
 
         {/* Abas */}
         <div className="flex gap-1 ml-auto items-center">
-          <ThemeToggle variant="page" />
+          <ThemeToggle variant="navbar" />
           <TabButton
             active={activeTab === "dashboards"}
             onClick={() => setActiveTab("dashboards")}
@@ -191,11 +191,13 @@ export default function AdminPage() {
 function TabButton({ active, onClick, icon, label }) {
   return (
     <Button
-      variant={active ? "default" : "ghost"}
+      variant="ghost"
       size="sm"
       onClick={onClick}
       className={`cursor-pointer flex items-center gap-2 font-semibold transition-colors
-        ${!active ? "text-muted-foreground hover:bg-muted/60" : ""}`}
+        ${active
+          ? "bg-white/20 text-white hover:bg-white/25"
+          : "text-white/70 hover:text-white hover:bg-white/10"}`}
     >
       {icon}
       <span className="hidden sm:inline">{label}</span>
