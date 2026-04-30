@@ -460,3 +460,128 @@ export function formatSnapshot(snapshot) {
   }
   return result;
 }
+
+// ── Query dinâmica (tool_use) ─────────────────────────────────────────────────
+
+const ALLOWED_AGGREGATIONS = new Set(["SUM", "COUNT", "AVG", "MAX", "MIN"]);
+const AGG_ITER = { SUM: "SUMX", COUNT: "COUNTX", AVG: "AVERAGEX", MAX: "MAXX", MIN: "MINX" };
+
+/**
+ * Valida os parâmetros do tool_use contra o knowledge.json do dashboard.
+ * Retorna { valid: true } ou { valid: false, error: string }.
+ */
+function validateDynamicParams(params, knowledge) {
+  if (!knowledge?.tables?.length) return { valid: false, error: "knowledge não disponível para este dashboard" };
+
+  const { table, dimension, metric, date_column, aggregation, top_n } = params;
+
+  // Tabela
+  const tableObj = knowledge.tables.find((t) => t.name === table);
+  if (!tableObj) {
+    return { valid: false, error: `tabela '${table}' não encontrada no modelo` };
+  }
+
+  const colNames = new Set((tableObj.columns ?? []).map((c) => c.name));
+
+  // Dimensão
+  if (!colNames.has(dimension)) {
+    return { valid: false, error: `coluna '${dimension}' não encontrada na tabela '${table}'` };
+  }
+
+  // Métrica
+  if (!colNames.has(metric)) {
+    return { valid: false, error: `coluna '${metric}' não encontrada na tabela '${table}'` };
+  }
+
+  // Coluna de data (opcional)
+  if (date_column && !colNames.has(date_column)) {
+    return { valid: false, error: `coluna de data '${date_column}' não encontrada na tabela '${table}'` };
+  }
+
+  // Agregação
+  const agg = (aggregation ?? "SUM").toUpperCase();
+  if (!ALLOWED_AGGREGATIONS.has(agg)) {
+    return { valid: false, error: `agregação '${aggregation}' não permitida — use SUM, COUNT, AVG, MAX ou MIN` };
+  }
+
+  // topN
+  if (top_n !== undefined && (typeof top_n !== "number" || top_n < 1)) {
+    return { valid: false, error: `top_n inválido: deve ser número positivo` };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Monta a DAX a partir de parâmetros estruturados (nunca aceita DAX livre).
+ */
+function buildDynamicDAX({ table, dimension, metric, aggregation, date_column, year, month, top_n }) {
+  const topN  = Math.min(top_n ?? 10, 50);
+  const agg   = (aggregation ?? "SUM").toUpperCase();
+  const iterFn = AGG_ITER[agg] ?? "SUMX";
+
+  // Filtro de período (opcional)
+  const filterParts = [];
+  if (date_column && year)  filterParts.push(`YEAR('${table}'[${date_column}]) = ${year}`);
+  if (date_column && month) filterParts.push(`MONTH('${table}'[${date_column}]) = ${month}`);
+
+  const sourceTable = filterParts.length
+    ? `FILTER(\n        '${table}',\n        ${filterParts.join(" && ")}\n    )`
+    : `'${table}'`;
+
+  const valueExpr = `${iterFn}(CURRENTGROUP(), '${table}'[${metric}])`;
+
+  return `EVALUATE
+TOPN(
+    ${topN},
+    GROUPBY(
+        ${sourceTable},
+        '${table}'[${dimension}],
+        "Valor", ${valueExpr}
+    ),
+    [Valor], DESC
+)
+ORDER BY [Valor] DESC`;
+}
+
+/**
+ * Valida params, monta DAX, executa no Power BI e retorna os resultados.
+ *
+ * @param {string}      token       - Bearer token PBI
+ * @param {string}      datasetId   - ID do dataset do dashboard atual
+ * @param {string|null} workspaceId - Workspace do dashboard (null = My Workspace)
+ * @param {object}      params      - Parâmetros estruturados vindos do Claude
+ * @param {object}      knowledge   - knowledge.json do dashboard (para validação)
+ * @returns {{ rows: object[]|null, dax: string|null, error: string|null }}
+ */
+export async function executeDynamicQuery(token, datasetId, workspaceId, params, knowledge) {
+  // 1. Validação rígida
+  const validation = validateDynamicParams(params, knowledge);
+  if (!validation.valid) {
+    return { rows: null, dax: null, error: validation.error };
+  }
+
+  // 2. Monta DAX via template
+  const dax = buildDynamicDAX(params);
+  console.log(`[tool_use] DAX gerada:\n${dax}`);
+
+  // 3. Executa
+  const base = workspaceId
+    ? `${PBI_API}/groups/${workspaceId}/datasets/${datasetId}`
+    : `${PBI_API}/datasets/${datasetId}`;
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  const rows = await runDAX(base, headers, dax, 15000, "dynamic");
+
+  if (!rows) {
+    return { rows: null, dax, error: "Query não retornou dados (possível erro DAX ou dataset indisponível)" };
+  }
+
+  const cleaned = cleanRows(rows);
+  console.log(`[tool_use] resultado: ${cleaned.length} linhas`);
+  return { rows: cleaned, dax, error: null };
+}

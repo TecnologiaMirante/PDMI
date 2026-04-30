@@ -6,7 +6,7 @@ import express from "express";
 import cors from "cors";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt, buildKnowledgeContext } from "./_buildPrompt.js";
-import { getPBIToken, getDataSnapshot, formatSnapshot } from "./_powerbi.js";
+import { getPBIToken, getDataSnapshot, formatSnapshot, executeDynamicQuery } from "./_powerbi.js";
 
 // Carrega .env da raiz em dev local (Render injeta env vars diretamente em produção)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -94,6 +94,32 @@ function loadKnowledge(dashboardId = null) {
 // CORS: em produção, configurar CORS_ORIGIN com a URL do frontend no Render
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
 app.use(express.json());
+
+// ── Ferramentas disponíveis para o Claude (tool_use) ─────────────────────────
+const TOOLS = [
+  {
+    name: "query_dataset",
+    description:
+      "Consulta o dataset do Power BI quando o snapshot não contém o recorte necessário " +
+      "para responder à pergunta do usuário. Use SOMENTE quando os dados exigidos não estão " +
+      "no snapshot. IMPORTANTE: ao decidir usar esta ferramenta, não escreva nenhum texto " +
+      "antes da chamada — invoque a ferramenta diretamente.",
+    input_schema: {
+      type: "object",
+      properties: {
+        table:        { type: "string",  description: "Nome exato da tabela no modelo (ex: fatAConteudo)" },
+        dimension:    { type: "string",  description: "Coluna de agrupamento (ex: Produto, Vendedor, Programa)" },
+        metric:       { type: "string",  description: "Coluna numérica a agregar (ex: Líquido Faturado)" },
+        aggregation:  { type: "string",  enum: ["SUM", "COUNT", "AVG", "MAX", "MIN"], description: "Função de agregação (padrão: SUM)" },
+        date_column:  { type: "string",  description: "Coluna de data para aplicar filtro de período (ex: Exibição)" },
+        year:         { type: "integer", description: "Ano para filtrar (ex: 2025)" },
+        month:        { type: "integer", description: "Mês para filtrar, 1–12 (opcional — omitir para ano inteiro)" },
+        top_n:        { type: "integer", description: "Quantidade de resultados a retornar, máximo 50 (padrão: 10)" },
+      },
+      required: ["table", "dimension", "metric"],
+    },
+  },
+];
 
 // ── GET /health ───────────────────────────────────────────────────────────────
 
@@ -187,6 +213,8 @@ app.post("/api/chat", async (req, res) => {
       max_tokens: 1024,
       system,
       messages,
+      tools: TOOLS,
+      tool_choice: { type: "auto" },
     });
   } catch (err) {
     const code = err?.status === 429 ? "rate_limit" : "generic";
@@ -202,12 +230,113 @@ app.post("/api/chat", async (req, res) => {
   res.flushHeaders();
 
   try {
+    // Rastreia blocos por index: text (streamed direto) e tool_use (acumulado)
+    const contentBlocks = new Map(); // index → { type, text?, id?, name?, jsonBuffer? }
+
     for await (const event of stream) {
+      if (event.type === "content_block_start") {
+        const { index, content_block: block } = event;
+        if (block.type === "text") {
+          contentBlocks.set(index, { type: "text", text: "" });
+        } else if (block.type === "tool_use") {
+          contentBlocks.set(index, { type: "tool_use", id: block.id, name: block.name, jsonBuffer: "" });
+        }
+      }
+      else if (event.type === "content_block_delta") {
+        const block = contentBlocks.get(event.index);
+        if (!block) continue;
+        if (event.delta.type === "text_delta" && block.type === "text") {
+          block.text += event.delta.text;
+          res.write(`data: ${JSON.stringify(event.delta.text)}\n\n`); // streaming normal
+        } else if (event.delta.type === "input_json_delta" && block.type === "tool_use") {
+          block.jsonBuffer += event.delta.partial_json;               // acumula params
+        }
+      }
+      // content_block_stop e message_delta não precisam de ação explícita aqui
+    }
+
+    // ── Verifica se houve tool_use após o stream terminar ─────────────────────
+    const toolBlock = [...contentBlocks.values()].find((b) => b.type === "tool_use");
+
+    // Caso 1: resposta normal — streaming já concluído acima
+    if (!toolBlock) {
+      res.write("data: [DONE]\n\n");
+      return;
+    }
+
+    // Caso 2: tool_use detectado — parse do JSON acumulado (feito só agora, nunca no meio)
+    console.log(`[tool_use] solicitado — dashboard=${context.dashboardId} dataset=${context.metadata?.datasetId ?? "n/a"}`);
+
+    let params;
+    try {
+      params = JSON.parse(toolBlock.jsonBuffer || "{}");
+    } catch (parseErr) {
+      console.error(`[tool_use] JSON inválido nos params: ${toolBlock.jsonBuffer}`);
+      res.write(`data: [ERROR:generic]\n\n`);
+      return;
+    }
+    console.log(`[tool_use] params recebidos: ${JSON.stringify(params)}`);
+
+    // Executa a query dinâmica no dataset do dashboard atual
+    const datasetId   = context.metadata?.datasetId   ?? null;
+    const workspaceId = context.metadata?.workspaceId ?? null;
+
+    let toolResultContent;
+    let toolIsError = false;
+
+    if (!datasetId) {
+      console.warn(`[tool_use] datasetId ausente — dashboard=${context.dashboardId}`);
+      toolResultContent = "Erro: datasetId não disponível para este dashboard.";
+      toolIsError = true;
+    } else {
+      const pbiToken = await getPBIToken();
+      const result   = await executeDynamicQuery(pbiToken, datasetId, workspaceId, params, knowledge);
+      if (result.error) {
+        console.warn(`[tool_use] erro na query: ${result.error}`);
+        toolResultContent = `Erro ao consultar: ${result.error}`;
+        toolIsError = true;
+      } else {
+        toolResultContent = JSON.stringify(result.rows);
+      }
+    }
+
+    // Reconstrói o conteúdo do assistente para a 2ª chamada
+    // (obrigatório pela API: a mensagem que gerou o tool_use deve estar no histórico)
+    const assistantContent = [...contentBlocks.values()].map((b) =>
+      b.type === "text"
+        ? { type: "text", text: b.text }
+        : { type: "tool_use", id: b.id, name: b.name, input: params }
+    );
+
+    const toolResult = {
+      type: "tool_result",
+      tool_use_id: toolBlock.id,
+      content: toolResultContent,
+      ...(toolIsError ? { is_error: true } : {}),
+    };
+
+    const messagesWithTool = [
+      ...messages,
+      { role: "assistant", content: assistantContent },
+      { role: "user",      content: [toolResult] },
+    ];
+
+    // 2ª chamada: streaming normal com o resultado da query
+    const stream2 = await retryStream(client, {
+      model: "claude-sonnet-4-6",
+      max_tokens: 1024,
+      system,
+      messages: messagesWithTool,
+      tools: TOOLS,
+    });
+
+    for await (const event of stream2) {
       if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
         res.write(`data: ${JSON.stringify(event.delta.text)}\n\n`);
       }
     }
     res.write("data: [DONE]\n\n");
+
   } catch (err) {
     const code = err?.status === 429 ? "rate_limit" : "generic";
     console.error(`[chat] erro durante stream:`, err.message);
