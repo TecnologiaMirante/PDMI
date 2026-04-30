@@ -85,7 +85,7 @@ export async function discoverTablesFromAPI(token, datasetId, workspaceId) {
 
 // ── DAX helper ────────────────────────────────────────────────────────────────
 
-async function runDAX(base, headers, query, timeoutMs = 45000) {
+async function runDAX(base, headers, query, timeoutMs = 45000, label = "query") {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -101,14 +101,14 @@ async function runDAX(base, headers, query, timeoutMs = 45000) {
     clearTimeout(timer);
     if (!res.ok) {
       const err = await res.text().catch(() => "");
-      console.warn(`[runDAX] ${res.status}: ${err.slice(0, 200)}`);
+      console.warn(`[runDAX:${label}] HTTP ${res.status}: ${err}`);
       return null;
     }
     const data = await res.json();
     return data.results?.[0]?.tables?.[0]?.rows ?? null;
   } catch (e) {
     clearTimeout(timer);
-    if (e.name !== "AbortError") console.warn(`[runDAX] erro: ${e.message}`);
+    if (e.name !== "AbortError") console.warn(`[runDAX:${label}] erro: ${e.message}`);
     return null;
   }
 }
@@ -283,7 +283,65 @@ ORDER BY [__mes] DESC, [Faturamento] DESC`
     console.log(`[snapshot] cliente × mês: sem dados`);
   }
 
-  return { tableNames, measures, relationships, tableSnapshots, crossSnapshots };
+  // ── Query 3: Faturamento anual por cliente ──────────────────────────────────
+  // GROUPBY simples sem aninhamento — Faturamento + Registros por Ano × Cliente.
+  // Meses Ativos é calculado em JS via Query 4.
+  const annualClientRows = await runDAX(base, headers,
+    `EVALUATE
+VAR Base =
+    ADDCOLUMNS(
+        'fatAConteudo',
+        "__ano", YEAR('fatAConteudo'[Exibição])
+    )
+RETURN
+GROUPBY(
+    Base,
+    [__ano],
+    'fatAConteudo'[Cliente],
+    "Faturamento Anual", SUMX(CURRENTGROUP(), 'fatAConteudo'[Líquido Faturado]),
+    "Registros",         COUNTX(CURRENTGROUP(), 'fatAConteudo'[Exibição])
+)
+ORDER BY [__ano] DESC, [Faturamento Anual] DESC`,
+    45000, "q3-anual"
+  );
+
+  if (annualClientRows?.length) {
+    console.log(`[snapshot] clientes por ano: ${annualClientRows.length} combinações`);
+  } else {
+    console.log(`[snapshot] clientes por ano: sem dados`);
+  }
+
+  // ── Query 4: Meses ativos por Ano × Cliente ─────────────────────────────────
+  // DISTINCT + SELECTCOLUMNS retorna todas as combinações (ano, cliente, mês).
+  // JS conta meses distintos por (ano, cliente) e injeta na seção anual.
+  const annualMesRows = await runDAX(base, headers,
+    `EVALUATE
+DISTINCT(
+    SELECTCOLUMNS(
+        'fatAConteudo',
+        "__ano",    YEAR('fatAConteudo'[Exibição]),
+        "Cliente",  'fatAConteudo'[Cliente],
+        "__mes",    FORMAT('fatAConteudo'[Exibição], "YYYY-MM")
+    )
+)`,
+    45000, "q4-meses"
+  );
+
+  if (annualMesRows?.length) {
+    console.log(`[snapshot] meses ativos: ${annualMesRows.length} combinações ano×cliente×mês`);
+  } else {
+    console.log(`[snapshot] meses ativos: sem dados`);
+  }
+
+  return {
+    tableNames,
+    measures,
+    relationships,
+    tableSnapshots,
+    crossSnapshots,
+    annualClientRows: annualClientRows ? cleanRows(annualClientRows) : null,
+    annualMesRows:    annualMesRows    ? cleanRows(annualMesRows)    : null,
+  };
 }
 
 // ── Formata snapshot ──────────────────────────────────────────────────────────
@@ -309,7 +367,7 @@ function rowLine(row) {
 export function formatSnapshot(snapshot) {
   if (!snapshot) return "";
 
-  const { measures, relationships, tableSnapshots, crossSnapshots } = snapshot;
+  const { measures, relationships, tableSnapshots, crossSnapshots, annualClientRows, annualMesRows } = snapshot;
   const lines = ["\n\n--- DADOS REAIS DO DATASET ---"];
 
   // Relacionamentos (compacto)
@@ -322,6 +380,44 @@ export function formatSnapshot(snapshot) {
     const slice = measures.filter((m) => m.table !== "Medidas" || true).slice(0, MAX_MEASURES);
     lines.push(`Medidas (${measures.length} total, top ${slice.length}): ${slice.map((m) => `[${m.name}]`).join(", ")}`);
     if (measures.length > MAX_MEASURES) lines.push(`  ... +${measures.length - MAX_MEASURES} medidas omitidas`);
+  }
+
+  // Top clientes por ano
+  if (annualClientRows?.length) {
+    lines.push(`\n=== TOP CLIENTES POR ANO (top 20/ano) ===`);
+
+    // Mapa de meses ativos: `${ano}|${cliente}` → Set de strings de mês
+    const mesMap = new Map();
+    if (annualMesRows?.length) {
+      for (const row of annualMesRows) {
+        const key = `${row.__ano}|${row.Cliente}`;
+        if (!mesMap.has(key)) mesMap.set(key, new Set());
+        mesMap.get(key).add(row.__mes);
+      }
+    }
+
+    // Agrupa por ano (DAX já entrega ordenado por ano desc, faturamento desc)
+    const byYear = new Map();
+    for (const row of annualClientRows) {
+      const ano = row.__ano;
+      if (!byYear.has(ano)) byYear.set(ano, []);
+      byYear.get(ano).push(row);
+    }
+
+    // Pega os 2 anos mais recentes presentes nos dados
+    const years = [...byYear.keys()].sort((a, b) => b - a).slice(0, 2);
+
+    for (const ano of years) {
+      lines.push(`Ano ${ano}:`);
+      const clients = byYear.get(ano).slice(0, 20);
+      clients.forEach((row, idx) => {
+        const fat = typeof row["Faturamento Anual"] === "number"
+          ? `R$ ${row["Faturamento Anual"].toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          : row["Faturamento Anual"];
+        const mesesAtivos = mesMap.get(`${ano}|${row.Cliente}`)?.size ?? "?";
+        lines.push(`  ${idx + 1}. ${row.Cliente} — ${fat} — ${mesesAtivos} meses — ${row.Registros} registros`);
+      });
+    }
   }
 
   // Top clientes por mês
