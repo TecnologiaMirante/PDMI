@@ -769,26 +769,40 @@ export default function FloatingChatWidget({
                     : "Pergunte sobre os dados..."
                 }
                 rows={1}
-                disabled={isStreaming}
+                disabled={isStreaming || snapshotStatus === "loading"}
                 className="flex-1 resize-none bg-muted/70 border border-border/40 rounded-2xl px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 disabled:opacity-50 max-h-28 transition-colors"
                 style={{ minHeight: "40px" }}
               />
               <Button
                 size="icon"
                 onClick={sendMessage}
-                disabled={!input.trim() || isStreaming}
+                disabled={!input.trim() || isStreaming || snapshotStatus === "loading"}
                 className="shrink-0 rounded-xl w-10 h-10 shadow-sm"
                 aria-label="Enviar mensagem"
               >
                 {isStreaming ? (
                   <Loader2 className="size-4 animate-spin" />
+                ) : snapshotStatus === "loading" ? (
+                  <Loader2 className="size-4 animate-spin opacity-50" />
                 ) : (
                   <Send className="size-4" />
                 )}
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground/60 text-center mt-2">
-              Enter para enviar · Shift+Enter para nova linha
+            <p className="text-[10px] text-center mt-2 transition-colors">
+              {snapshotStatus === "loading" ? (
+                <span className="text-amber-500 dark:text-amber-400 font-medium">
+                  Aguarde · sincronizando dados do dashboard…
+                </span>
+              ) : snapshotStatus === "error" ? (
+                <span className="text-muted-foreground/60">
+                  Sem dados em tempo real · Enter para enviar · Shift+Enter para nova linha
+                </span>
+              ) : (
+                <span className="text-muted-foreground/60">
+                  Enter para enviar · Shift+Enter para nova linha
+                </span>
+              )}
             </p>
           </div>
         </div>
