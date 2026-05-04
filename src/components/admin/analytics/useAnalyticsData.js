@@ -219,7 +219,12 @@ export function useAnalyticsData(dashboards, users) {
               };
             }
           } else {
-            if (isUserLegacyInRange && data.accessCount > 0) {
+            // Dashboard sem granularidade diária.
+            // Inclui dados agregados (all-time) se o usuário teve atividade no período —
+            // tanto via rastreamento moderno de plataforma quanto via legacy.
+            const userActiveInPeriod =
+              filteredPlatformAccesses > 0 || isUserLegacyInRange;
+            if (userActiveInPeriod && data.accessCount > 0) {
               filteredDashboards[dashId] = {
                 ...data,
                 accessCount: data.accessCount || 0,
@@ -237,16 +242,33 @@ export function useAnalyticsData(dashboards, users) {
           return null;
         }
 
+        const hasLegacyDashData = Object.values(filteredDashboards).some(
+          (d) => d._legacy,
+        );
+
+        // Quando não há dailyTimeSeconds na plataforma, deriva o tempo somando
+        // os tempos individuais de dashboard (estimativa conservadora — exclui
+        // tempo fora dos dashboards, mas é consistente com o ranking de dashboards).
+        const derivedPlatformTime =
+          filteredPlatformTimeSeconds === 0 && hasPlatformDaily
+            ? Object.values(filteredDashboards).reduce(
+                (sum, d) => sum + (d.totalTimeSeconds || 0),
+                0,
+              )
+            : filteredPlatformTimeSeconds;
+
         return {
           ...s,
           platform: {
             ...s.platform,
             accessCount: filteredPlatformAccesses,
-            totalTimeSeconds: filteredPlatformTimeSeconds,
+            totalTimeSeconds: derivedPlatformTime,
             dailyAccesses: filteredPlatformDaily,
           },
           dashboards: filteredDashboards,
-          _hasLegacyData: !hasPlatformDaily && isUserLegacyInRange,
+          _hasLegacyData:
+            (!hasPlatformDaily && isUserLegacyInRange) ||
+            (hasPlatformDaily && hasLegacyDashData),
         };
       })
       .filter(Boolean);
@@ -355,8 +377,7 @@ export function useAnalyticsData(dashboards, users) {
     });
     return Object.entries(map)
       .map(([id, data]) => ({ id, titulo: dashMap[id] || id, ...data }))
-      .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, 8);
+      .sort((a, b) => b.accessCount - a.accessCount);
   }, [filteredStats, dashMap, isFilteringByDash, selectedDashboardSet]);
 
   // ── Top dashboards por tempo ──
@@ -374,8 +395,7 @@ export function useAnalyticsData(dashboards, users) {
     });
     return Object.entries(map)
       .map(([id, data]) => ({ id, titulo: dashMap[id] || id, ...data }))
-      .sort((a, b) => b.totalTimeSeconds - a.totalTimeSeconds)
-      .slice(0, 8);
+      .sort((a, b) => b.totalTimeSeconds - a.totalTimeSeconds);
   }, [filteredStats, dashMap, isFilteringByDash, selectedDashboardSet]);
 
   // ── Top usuários ──
@@ -392,9 +412,8 @@ export function useAnalyticsData(dashboards, users) {
       }))
       .sort(
         (a, b) =>
-          b.accessCount - a.accessCount || b.totalSeconds - a.totalSeconds,
-      )
-      .slice(0, 8);
+          b.totalSeconds - a.totalSeconds || b.dashCount - a.dashCount,
+      );
   }, [filteredStats, userMap]);
 
   // ── Usuários inativos ──
@@ -465,6 +484,18 @@ export function useAnalyticsData(dashboards, users) {
   const maxDashAccess = topDashboards[0]?.accessCount || 1;
   const maxDashTime = topDashboardsByTime[0]?.totalTimeSeconds || 1;
   const maxUserAccess = topUsers[0]?.accessCount || 1;
+  const maxUserTime = topUsers[0]?.totalSeconds || 1;
+
+  // Data mais antiga registrada em qualquer dailyAccesses — indica início real da coleta.
+  const dataCollectionStart = useMemo(() => {
+    let earliest = null;
+    allStats.forEach((s) => {
+      Object.keys(s.platform?.dailyAccesses || {}).forEach((dateStr) => {
+        if (!earliest || dateStr < earliest) earliest = dateStr;
+      });
+    });
+    return earliest; // "YYYY-MM-DD" ou null
+  }, [allStats]);
 
   const showAlertsSection =
     neverAccessedDashboards.length > 0 || inactiveUsersList.length > 0;
@@ -595,5 +626,7 @@ export function useAnalyticsData(dashboards, users) {
     maxDashAccess,
     maxDashTime,
     maxUserAccess,
+    maxUserTime,
+    dataCollectionStart,
   };
 }
