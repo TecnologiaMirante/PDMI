@@ -16,6 +16,8 @@
 #   -DryRun  | --dry-run  | /dry-run
 #   -Only    | --only     | /only    (requer valor)
 #   -Yes     | --yes      | /yes     (pula confirmacao em modo LIVE)
+#
+# Logs salvos em: scripts/logs/sync-knowledge-YYYY-MM-DD-HH-mm.txt
 
 # ── Parse manual de argumentos (suporta --estilo e -Estilo) ──────────────────
 $DryRun = $false
@@ -80,11 +82,22 @@ while ($i -lt $args.Count) {
   $i++
 }
 
-# ── Setup ─────────────────────────────────────────────────────────────────────
+# ── Setup de caminhos ─────────────────────────────────────────────────────────
 $scriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptDir
 Set-Location $projectRoot
 
+# ── Logging: cria pasta e inicia transcript ───────────────────────────────────
+$logsDir = Join-Path $scriptDir "logs"
+if (-not (Test-Path $logsDir)) {
+  New-Item -ItemType Directory -Path $logsDir | Out-Null
+}
+
+$timestamp = Get-Date -Format "yyyy-MM-dd-HH-mm"
+$logFile   = Join-Path $logsDir "sync-knowledge-$timestamp.txt"
+Start-Transcript -Path $logFile | Out-Null
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
 $sep = "=" * 70
 
 function Write-Step($n, $msg) {
@@ -98,6 +111,7 @@ function Fail($msg) {
   Write-Host ""
   Write-Host "ERRO: $msg" -ForegroundColor Red
   Write-Host ""
+  Stop-Transcript | Out-Null
   exit 1
 }
 
@@ -111,6 +125,7 @@ if ($DryRun) {
 }
 Write-Host "  $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 if ($Only) { Write-Host "  Somente: $Only" }
+Write-Host "  Log: $logFile"
 Write-Host $sep
 
 # ── Confirmacao LIVE ──────────────────────────────────────────────────────────
@@ -124,6 +139,7 @@ if (-not $DryRun) {
       Write-Host ""
       Write-Host "  Operacao cancelada pelo usuario." -ForegroundColor Cyan
       Write-Host ""
+      Stop-Transcript | Out-Null
       exit 0
     }
   } else {
@@ -182,3 +198,5 @@ if ($DryRun) {
 }
 Write-Host $sep
 Write-Host ""
+
+Stop-Transcript | Out-Null
