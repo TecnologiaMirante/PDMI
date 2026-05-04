@@ -5,6 +5,8 @@ import fs from "fs";
 import express from "express";
 import cors from "cors";
 import Anthropic from "@anthropic-ai/sdk";
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { getFirestore }                  from "firebase-admin/firestore";
 import { buildSystemPrompt, buildKnowledgeContext } from "./_buildPrompt.js";
 import { getPBIToken, getDataSnapshot, formatSnapshot, executeDynamicQuery } from "./_powerbi.js";
 
@@ -15,79 +17,156 @@ loadEnv({ path: path.join(__dirname, "../.env") });
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ── Knowledge registry ────────────────────────────────────────────────────────
-// Carrega knowledge por dashboardId via index.json.
-// Fallback: acoes-de-conteudo.knowledge.json (compatibilidade com MVP).
+// ── Firebase Admin ────────────────────────────────────────────────────────────
+// Três estratégias de credencial (ordem de prioridade):
+//   1. FIREBASE_SERVICE_ACCOUNT_BASE64  — base64 do JSON (ideal para Render)
+//   2. FIREBASE_SERVICE_ACCOUNT         — JSON em string
+//   3. FIREBASE_SERVICE_ACCOUNT_PATH    — caminho para arquivo (dev local)
+// Se nenhuma funcionar, db=null e o backend usa apenas arquivos locais.
+// NUNCA loga private_key — apenas project_id (inofensivo).
 
-const KNOWLEDGE_DIR    = path.join(__dirname, "../powerbi/knowledge");
-const KNOWLEDGE_FALLBACK = path.join(KNOWLEDGE_DIR, "acoes-de-conteudo.knowledge.json");
-const KNOWLEDGE_INDEX  = path.join(KNOWLEDGE_DIR, "index.json");
-const knowledgeCache   = new Map();  // dashboardId | "_default" | "_index" → valor
+let db = null;
 
-/** Retorna o index.json parseado (leitura única, fica em cache). */
-function loadIndex() {
-  if (knowledgeCache.has("_index")) return knowledgeCache.get("_index");
-  if (!fs.existsSync(KNOWLEDGE_INDEX)) {
-    knowledgeCache.set("_index", null);
-    return null;
+(function initFirebase() {
+  if (getApps().length > 0) { db = getFirestore(); return; }
+
+  const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  if (b64) {
+    try {
+      const sa = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
+      initializeApp({ credential: cert(sa) });
+      db = getFirestore();
+      console.log(`[firebase] ✓ init via BASE64 — project: ${sa.project_id}`);
+      return;
+    } catch (err) {
+      console.warn(`[firebase] falha via BASE64: ${err.message}`);
+    }
   }
+
+  const jsonStr = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (jsonStr) {
+    try {
+      const sa = JSON.parse(jsonStr);
+      initializeApp({ credential: cert(sa) });
+      db = getFirestore();
+      console.log(`[firebase] ✓ init via FIREBASE_SERVICE_ACCOUNT — project: ${sa.project_id}`);
+      return;
+    } catch (err) {
+      console.warn(`[firebase] falha via FIREBASE_SERVICE_ACCOUNT: ${err.message}`);
+    }
+  }
+
+  const filePath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+  if (filePath) {
+    try {
+      const sa = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      initializeApp({ credential: cert(sa) });
+      db = getFirestore();
+      console.log(`[firebase] ✓ init via PATH=${filePath} — project: ${sa.project_id}`);
+      return;
+    } catch (err) {
+      console.warn(`[firebase] falha via FIREBASE_SERVICE_ACCOUNT_PATH: ${err.message}`);
+    }
+  }
+
+  console.log("[firebase] nenhuma credencial configurada — Firestore desabilitado, usando arquivos locais");
+})();
+
+// ── Knowledge registry ────────────────────────────────────────────────────────
+// Fonte primária: Firestore `dashboard_knowledge/{dashboardId}`.
+// Fallback:  index.json  →  <id>.knowledge.json  →  acoes-de-conteudo.knowledge.json
+// TTL cache: 5 min (override via KNOWLEDGE_TTL_MS env var).
+
+const KNOWLEDGE_DIR      = path.join(__dirname, "../powerbi/knowledge");
+const KNOWLEDGE_FALLBACK = path.join(KNOWLEDGE_DIR, "acoes-de-conteudo.knowledge.json");
+const KNOWLEDGE_INDEX    = path.join(KNOWLEDGE_DIR, "index.json");
+
+const KNOWLEDGE_TTL_MS = Number(process.env.KNOWLEDGE_TTL_MS ?? 5 * 60 * 1000); // 5 min
+const knowledgeCache   = new Map(); // cacheKey → { data, loadedAt }
+
+let _indexData = undefined; // lazy-loaded uma vez (index.json é estático entre deploys)
+
+function loadIndex() {
+  if (_indexData !== undefined) return _indexData;
+  if (!fs.existsSync(KNOWLEDGE_INDEX)) { _indexData = null; return null; }
   try {
-    const index = JSON.parse(fs.readFileSync(KNOWLEDGE_INDEX, "utf8"));
-    knowledgeCache.set("_index", index);
-    return index;
+    _indexData = JSON.parse(fs.readFileSync(KNOWLEDGE_INDEX, "utf8"));
+    return _indexData;
   } catch (err) {
     console.warn(`[knowledge] falha ao ler index.json: ${err.message}`);
-    knowledgeCache.set("_index", null);
+    _indexData = null;
     return null;
   }
 }
 
-/** Lê e cacheia um arquivo .knowledge.json pelo caminho absoluto. */
-function readKnowledgeFile(file, cacheKey) {
+function readKnowledgeFile(file) {
   if (!fs.existsSync(file)) {
     console.warn(`[knowledge] arquivo não encontrado: ${path.basename(file)}`);
-    knowledgeCache.set(cacheKey, null);
     return null;
   }
   try {
-    const knowledge = JSON.parse(fs.readFileSync(file, "utf8"));
-    knowledgeCache.set(cacheKey, knowledge);
-    return knowledge;
+    return JSON.parse(fs.readFileSync(file, "utf8"));
   } catch (err) {
     console.warn(`[knowledge] falha ao carregar ${path.basename(file)}: ${err.message}`);
-    knowledgeCache.set(cacheKey, null);
     return null;
   }
 }
 
-function loadKnowledge(dashboardId = null) {
-  const cacheKey = dashboardId ?? "_default";
-  if (knowledgeCache.has(cacheKey)) return knowledgeCache.get(cacheKey);
-
-  // ── Resolução via index.json ────────────────────────────────────────────────
+/** Fallback: carrega knowledge dos arquivos locais (index.json → arquivo → acoes-de-conteudo). */
+function loadKnowledgeLocal(dashboardId) {
   if (dashboardId) {
     const index = loadIndex();
     const entry = index?.dashboards?.find((d) => d.dashboardId === dashboardId);
-
     if (entry?.knowledgeFile) {
       const file = path.join(KNOWLEDGE_DIR, entry.knowledgeFile);
-      const knowledge = readKnowledgeFile(file, cacheKey);
+      const knowledge = readKnowledgeFile(file);
       if (knowledge) {
-        console.log(`[knowledge] dashboardId=${dashboardId} file=${entry.knowledgeFile} (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+        console.log(`[knowledge] dashboardId=${dashboardId} source=local file=${entry.knowledgeFile} (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
         return knowledge;
       }
-      // Arquivo listado no index mas ausente em disco → cai no fallback
-      console.warn(`[knowledge] dashboardId=${dashboardId} → ${entry.knowledgeFile} não encontrado em disco, usando fallback`);
+      console.warn(`[knowledge] dashboardId=${dashboardId} → ${entry.knowledgeFile} ausente em disco, usando fallback`);
     } else {
       console.warn(`[knowledge] dashboardId=${dashboardId} não encontrado no index.json, usando fallback`);
     }
   }
-
-  // ── Fallback: acoes-de-conteudo.knowledge.json ──────────────────────────────
-  const knowledge = readKnowledgeFile(KNOWLEDGE_FALLBACK, cacheKey);
+  const knowledge = readKnowledgeFile(KNOWLEDGE_FALLBACK);
   if (knowledge) {
-    console.log(`[knowledge] dashboardId=${dashboardId ?? "null"} file=acoes-de-conteudo.knowledge.json [fallback] (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+    console.log(`[knowledge] dashboardId=${dashboardId ?? "null"} source=local [fallback] (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
   }
+  return knowledge;
+}
+
+/** Carrega knowledge: Firestore → TTL cache → arquivos locais. */
+async function loadKnowledge(dashboardId = null) {
+  const cacheKey = dashboardId ?? "_default";
+
+  // TTL cache
+  const cached = knowledgeCache.get(cacheKey);
+  if (cached && Date.now() - cached.loadedAt < KNOWLEDGE_TTL_MS) return cached.data;
+
+  // Firestore (apenas se configurado e dashboardId disponível)
+  if (db && dashboardId) {
+    try {
+      const snap = await db.collection("dashboard_knowledge").doc(dashboardId).get();
+      if (snap.exists) {
+        const knowledge = snap.data()?.knowledge ?? null;
+        knowledgeCache.set(cacheKey, { data: knowledge, loadedAt: Date.now() });
+        if (knowledge) {
+          console.log(`[knowledge] dashboardId=${dashboardId} source=firestore (${knowledge.tables?.length ?? 0} tabelas, ${knowledge.measures?.length ?? 0} medidas, ${knowledge.pages?.length ?? 0} páginas)`);
+        } else {
+          console.warn(`[knowledge] dashboardId=${dashboardId} Firestore: documento existe mas knowledge=null`);
+        }
+        return knowledge;
+      }
+      console.warn(`[knowledge] dashboardId=${dashboardId} não encontrado no Firestore — usando arquivos locais`);
+    } catch (err) {
+      console.warn(`[knowledge] Firestore erro para ${dashboardId}: ${err.message} — usando arquivos locais`);
+    }
+  }
+
+  // Fallback: arquivos locais
+  const knowledge = loadKnowledgeLocal(dashboardId);
+  knowledgeCache.set(cacheKey, { data: knowledge, loadedAt: Date.now() });
   return knowledge;
 }
 
@@ -179,10 +258,8 @@ app.post("/api/chat", async (req, res) => {
     timeout: 55_000,
   });
 
-  // Carrega o knowledge do dashboard.
-  // context.dashboardId será usado no futuro quando o frontend começar a enviá-lo.
-  // Por ora, loadKnowledge(null) retorna o único knowledge disponível.
-  const knowledge     = loadKnowledge(context.dashboardId ?? null);
+  // Carrega o knowledge do dashboard (Firestore → cache TTL → arquivos locais).
+  const knowledge     = await loadKnowledge(context.dashboardId ?? null);
   const knowledgeText = buildKnowledgeContext(knowledge);
 
   // Monta blocos do system em ordem crescente de volatilidade:

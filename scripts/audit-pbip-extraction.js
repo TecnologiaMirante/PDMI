@@ -334,6 +334,8 @@ function main() {
   }
 
   console.log("═".repeat(74) + "\n");
+
+  if (suspeitos.length > 0) process.exit(1);
 }
 
 main();
