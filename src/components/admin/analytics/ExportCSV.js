@@ -46,15 +46,15 @@ export function exportAnalyticsCSV({
   rows.push([]);
 
   // Top Usuários
-  rows.push(["== TOP USUÁRIOS (por número de acessos) =="]);
-  rows.push(["#", "Nome", "Sessões", "Dashboards visitados", "Tempo total"]);
+  rows.push(["== TOP USUÁRIOS (por tempo de uso) =="]);
+  rows.push(["#", "Nome", "Tempo total", "Dashboards visitados", "Sessões"]);
   topUsers.forEach((u, i) => {
     rows.push([
       i + 1,
       u.name,
-      u.accessCount,
-      u.dashCount,
       fmtAdminTime(u.totalSeconds),
+      u.dashCount,
+      u.accessCount,
     ]);
   });
   rows.push([]);

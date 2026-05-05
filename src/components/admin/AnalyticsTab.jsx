@@ -95,6 +95,8 @@ export default function AnalyticsTab({ dashboards, users }) {
     maxDashAccess,
     maxDashTime,
     maxUserAccess,
+    maxUserTime,
+    dataCollectionStart,
   } = useAnalyticsData(dashboards, users);
 
   const handleExportPDF = async () => {
@@ -177,6 +179,15 @@ export default function AnalyticsTab({ dashboards, users }) {
                 ? `Exibindo dados de ${platformTotals.activeUsers} usuário${platformTotals.activeUsers !== 1 ? "s" : ""} em ${periodLabel.toLowerCase()}`
                 : "Dados de uso globais coletados em tempo real"}
             </p>
+            {dataCollectionStart && (
+              <p className="text-xs text-muted-foreground/70 mt-0.5">
+                Coleta iniciada em{" "}
+                {new Date(dataCollectionStart + "T00:00:00").toLocaleDateString(
+                  "pt-BR",
+                  { day: "2-digit", month: "2-digit", year: "numeric" },
+                )}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -386,7 +397,7 @@ export default function AnalyticsTab({ dashboards, users }) {
             value={fmtAdminTime(platformTotals.totalSeconds)}
             sub={
               hasLegacyDataInFilter
-                ? "\u26a0 dados legados sem tempo granular"
+                ? "⚠ estimado via tempo em dashboards"
                 : undefined
             }
           />
@@ -396,7 +407,7 @@ export default function AnalyticsTab({ dashboards, users }) {
             value={fmtAdminTime(platformTotals.avgSeconds)}
             sub={
               hasLegacyDataInFilter
-                ? "\u26a0 tempo pode estar subestimado"
+                ? "⚠ baseado no tempo em dashboards"
                 : undefined
             }
           />
@@ -518,7 +529,7 @@ export default function AnalyticsTab({ dashboards, users }) {
               {minDate && hasLegacyDataInFilter && (
                 <span
                   className="text-[9px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded-full uppercase tracking-wide"
-                  title="Alguns registros históricos não possuem granularidade diária. Acessos aparecem, mas tempo foi zerado para não inflar o período filtrado."
+                  title="Dados de visitas a dashboards e tempo de sessão sem granularidade diária foram incluídos como totais históricos. Sessões na plataforma e o gráfico diário refletem o período selecionado com precisão."
                 >
                   dados legados incluídos
                 </span>
@@ -651,7 +662,7 @@ export default function AnalyticsTab({ dashboards, users }) {
                 Dashboards mais acessados
               </h3>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 overflow-y-auto max-h-80">
               {topDashboards.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4 italic">
                   Nenhum dado disponível.
@@ -710,13 +721,13 @@ export default function AnalyticsTab({ dashboards, users }) {
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-3">
                   <p className="text-sm">
-                    Ordenado por número de acessos. Tempo total só é usado como
-                    critério de desempate.
+                    Ordenado por tempo total na plataforma. Em caso de empate,
+                    desempate pelo número de dashboards visitados.
                   </p>
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 overflow-y-auto max-h-80">
               {topUsers.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4 italic">
                   Nenhum dado disponível.
@@ -746,7 +757,7 @@ export default function AnalyticsTab({ dashboards, users }) {
                       <div
                         className={`h-full rounded-full transition-all ${i === 0 ? "bg-emerald-500" : "bg-emerald-500/40"}`}
                         style={{
-                          width: `${(u.accessCount / maxUserAccess) * 100}%`,
+                          width: `${(u.totalSeconds / maxUserTime) * 100}%`,
                         }}
                       />
                     </div>
@@ -769,7 +780,7 @@ export default function AnalyticsTab({ dashboards, users }) {
                 ranking por tempo total
               </span>
             </div>
-            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto max-h-80">
               {topDashboardsByTime.map((d, i) => (
                 <div key={d.id} className="flex items-center gap-3">
                   <span
@@ -812,6 +823,38 @@ export default function AnalyticsTab({ dashboards, users }) {
               <h3 className="font-bold text-foreground">
                 Engajamento por Dashboard
               </h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Explicar métricas de engajamento"
+                  >
+                    <Info className="size-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 p-3 space-y-2">
+                  <p className="text-sm font-semibold text-foreground">
+                    Como ler este gráfico
+                  </p>
+                  <div className="space-y-1.5 text-sm text-muted-foreground">
+                    <p>
+                      <span className="font-medium text-primary">Visitaram %</span>
+                      {" — "}de todos os usuários que têm permissão para acessar
+                      este dashboard, quantos de fato o abriram no período.
+                    </p>
+                    <p>
+                      <span className="font-medium text-foreground/70">Liberados %</span>
+                      {" — "}quantos usuários da empresa têm permissão de acesso a
+                      este dashboard (independente de terem acessado ou não).
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground border-t border-border pt-2">
+                    Um dashboard com 80% liberados e 20% visitaram indica baixo
+                    aproveitamento — muita gente tem acesso mas poucos abriram.
+                  </p>
+                </PopoverContent>
+              </Popover>
               <span className="ml-auto text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 visitantes vs. liberados
               </span>

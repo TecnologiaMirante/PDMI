@@ -26,7 +26,7 @@ export function CoverageDualBar({
       </div>
       <div
         className="flex items-center gap-1.5"
-        title={`${Math.round(accessPct)}% dos usuÃ¡rios que POSSUEM PERMISSÃƒO abriram este dashboard.`}
+        title={`${Math.round(accessPct)}% dos usuários com permissão abriram este dashboard no período.`}
       >
         <span className="text-[9px] text-primary/70 w-15 shrink-0 text-right uppercase tracking-tighter">
           visitaram
@@ -43,7 +43,7 @@ export function CoverageDualBar({
       </div>
       <div
         className="flex items-center gap-1.5"
-        title={`${Math.round(coveragePct)}% de todos os usuÃ¡rios da empresa podem acessar este dashboard.`}
+        title={`${Math.round(coveragePct)}% de todos os usuários da empresa têm permissão para acessar este dashboard.`}
       >
         <span className="text-[9px] text-muted-foreground w-[60px] shrink-0 text-right uppercase tracking-tighter">
           liberados
