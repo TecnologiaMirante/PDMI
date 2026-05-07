@@ -143,7 +143,7 @@ export default function HomePage() {
           {/* Toggle "Ver dashboards ocultos" — apenas para admin */}
           {isAdmin && (
             <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-muted-foreground mr-1 select-none">
+              <label className="text-sm font-medium text-muted-foreground mr-1 select-none hidden sm:block">
                 Ver dashboards ocultos
               </label>
               <div
@@ -157,7 +157,7 @@ export default function HomePage() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 animate-in fade-in duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 animate-in fade-in duration-500">
             {[...Array(8)].map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -256,7 +256,7 @@ export default function HomePage() {
             )}
 
             {/* ── Grid principal ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               {paginatedCards.map((card, i) => (
                 <DashboardCard
                   key={card.id}

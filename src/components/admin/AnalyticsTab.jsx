@@ -1,4 +1,17 @@
 import React from "react";
+
+function useIsSmallScreen() {
+  const [small, setSmall] = React.useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false,
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const handler = (e) => setSmall(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return small;
+}
 import {
   Download,
   FileText,
@@ -50,6 +63,7 @@ import { CoverageDualBar } from "./analytics/CoverageDualBar";
 import { useAnalyticsData } from "./analytics/useAnalyticsData";
 
 export default function AnalyticsTab({ dashboards, users }) {
+  const isSmall = useIsSmallScreen();
   const {
     loading,
     allStats,
@@ -289,7 +303,7 @@ export default function AnalyticsTab({ dashboards, users }) {
                 <Button
                   variant="outline"
                   className={cn(
-                    "h-9 w-65 justify-start text-left font-normal text-xs bg-background shrink-0",
+                    "h-9 w-full sm:w-65 justify-start text-left font-normal text-xs bg-background shrink-0",
                     !customRange?.from && "text-muted-foreground",
                   )}
                 >
@@ -309,7 +323,7 @@ export default function AnalyticsTab({ dashboards, users }) {
                   defaultMonth={customRange?.from}
                   selected={customRange}
                   onSelect={setCustomRange}
-                  numberOfMonths={2}
+                  numberOfMonths={isSmall ? 1 : 2}
                   locale={ptBR}
                 />
               </PopoverContent>

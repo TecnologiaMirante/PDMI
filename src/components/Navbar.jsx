@@ -57,11 +57,11 @@ export default function Navbar({ search, onSearchChange, setor, onSetorChange, s
             <Button
               id="btn-goto-admin"
               onClick={() => navigate("/admin")}
-              className="hidden md:flex btn-pill-solid py-1.5! text-xs! gap-1.5 shrink-0 h-auto"
+              className="flex btn-pill-solid py-1.5! text-xs! gap-1.5 shrink-0 h-auto"
               style={{ background: "white", color: "#006064" }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
-              Administração
+              <span className="hidden md:inline">Administração</span>
             </Button>
           )}
           <ThemeToggle variant="navbar" />

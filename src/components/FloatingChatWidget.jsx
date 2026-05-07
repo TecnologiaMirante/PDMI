@@ -486,11 +486,11 @@ export default function FloatingChatWidget({
       {panelState === "closed" && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-full shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200"
+          className="fixed bottom-5 left-4 z-50 flex items-center gap-1.5 bg-primary text-primary-foreground pl-1.5 pr-3 py-1.5 rounded-full shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200"
           aria-label="Abrir Analista BI"
         >
-          <img src={iconMara} alt="Mara" className="size-7 object-cover rounded-full shrink-0" />
-          <span className="text-sm font-semibold">Analista BI</span>
+          <img src={iconMara} alt="Mara" className="size-6 object-cover rounded-full shrink-0" />
+          <span className="text-xs font-semibold">Analista BI</span>
         </button>
       )}
 
@@ -505,7 +505,7 @@ export default function FloatingChatWidget({
               setIsExpanded(false);
             }
           }}
-          className={`fixed bottom-0 right-0 z-50 flex flex-col w-full sm:bottom-6 sm:right-6 bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden origin-bottom-right chat-resize
+          className={`fixed bottom-0 left-0 z-50 flex flex-col w-full sm:bottom-5 sm:left-4 sm:w-auto bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden origin-bottom-left chat-resize
             ${panelState === "opening" ? "chat-enter" : ""}
             ${panelState === "closing" ? "chat-exit" : ""}
             ${panelSize}`}

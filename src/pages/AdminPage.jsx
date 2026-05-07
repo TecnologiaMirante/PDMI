@@ -78,56 +78,62 @@ export default function AdminPage() {
     );
   }
 
+  const TABS = [
+    { key: "dashboards",    icon: <LayoutDashboard className="size-4" />, label: "Dashboards"   },
+    { key: "users",         icon: <Users className="size-4" />,           label: "Usuários"     },
+    { key: "sectors",       icon: <Building className="size-4" />,        label: "Setores"      },
+    { key: "analytics",     icon: <BarChart2 className="size-4" />,       label: "Analytics"    },
+    { key: "notifications", icon: <Bell className="size-4" />,            label: "Notificações" },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
-      <nav className="flex items-center gap-4 px-4 md:px-6 py-4 shadow-nav" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate("/home")}
-          className="gap-1 text-white/90 hover:text-white hover:bg-white/10"
-        >
-          <ChevronLeft className="size-4" />
-          Voltar
-        </Button>
-        <h1 className="text-lg font-bold text-white hidden md:block">
-          Painel de Administração
-        </h1>
+      <nav className="shadow-nav flex flex-col" style={{ background: "linear-gradient(90deg, #006064 0%, #00838F 50%, #006064 100%)" }}>
+        {/* ── Linha principal ── */}
+        <div className="flex items-center gap-2 px-4 md:px-6 py-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/home")}
+            className="gap-1 text-white/90 hover:text-white hover:bg-white/10 shrink-0"
+          >
+            <ChevronLeft className="size-4" />
+            <span className="hidden sm:inline">Voltar</span>
+          </Button>
+          <h1 className="text-base md:text-lg font-bold text-white hidden sm:block truncate">
+            Painel de Administração
+          </h1>
 
-        {/* Abas */}
-        <div className="flex gap-1 ml-auto items-center">
-          <ThemeToggle variant="navbar" />
-          <TabButton
-            active={activeTab === "dashboards"}
-            onClick={() => setActiveTab("dashboards")}
-            icon={<LayoutDashboard className="size-4" />}
-            label="Dashboards"
-          />
-          <TabButton
-            active={activeTab === "users"}
-            onClick={() => setActiveTab("users")}
-            icon={<Users className="size-4" />}
-            label="Usuários"
-          />
-          <TabButton
-            active={activeTab === "sectors"}
-            onClick={() => setActiveTab("sectors")}
-            icon={<Building className="size-4" />}
-            label="Setores"
-          />
-          <TabButton
-            active={activeTab === "analytics"}
-            onClick={() => setActiveTab("analytics")}
-            icon={<BarChart2 className="size-4" />}
-            label="Analytics"
-          />
-          <TabButton
-            active={activeTab === "notifications"}
-            onClick={() => setActiveTab("notifications")}
-            icon={<Bell className="size-4" />}
-            label="Notificações"
-          />
+          {/* Abas + ThemeToggle — inline em sm+ */}
+          <div className="flex gap-1 ml-auto items-center">
+            <ThemeToggle variant="navbar" />
+            <div className="hidden sm:flex gap-1">
+              {TABS.map((t) => (
+                <TabButton
+                  key={t.key}
+                  active={activeTab === t.key}
+                  onClick={() => setActiveTab(t.key)}
+                  icon={t.icon}
+                  label={t.label}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Faixa de abas mobile (xs only) ── */}
+        <div className="flex sm:hidden overflow-x-auto gap-1 px-3 pb-2 scrollbar-none">
+          {TABS.map((t) => (
+            <TabButton
+              key={t.key}
+              active={activeTab === t.key}
+              onClick={() => setActiveTab(t.key)}
+              icon={t.icon}
+              label={t.label}
+              showLabel
+            />
+          ))}
         </div>
       </nav>
 
@@ -188,19 +194,19 @@ export default function AdminPage() {
   );
 }
 
-function TabButton({ active, onClick, icon, label }) {
+function TabButton({ active, onClick, icon, label, showLabel = false }) {
   return (
     <Button
       variant="ghost"
       size="sm"
       onClick={onClick}
-      className={`cursor-pointer flex items-center gap-2 font-semibold transition-colors
+      className={`cursor-pointer flex items-center gap-2 font-semibold transition-colors shrink-0
         ${active
           ? "bg-white/20 text-white hover:bg-white/25"
           : "text-white/70 hover:text-white hover:bg-white/10"}`}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      <span className={showLabel ? undefined : "hidden sm:inline"}>{label}</span>
     </Button>
   );
 }
