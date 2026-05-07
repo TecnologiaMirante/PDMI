@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import portalLogo from "@/assets/PORTAL DE DADOS.svg";
 
 export default function ProfileSetupModal() {
-  const { user, userProfile, refreshProfile } = useAuth();
+  const { user, userProfile, loading, refreshProfile } = useAuth();
   const [sectors, setSectors] = useState([]);
   const [sectorId, setSectorId] = useState("");
   const [saving, setSaving] = useState(false);
@@ -30,7 +30,9 @@ export default function ProfileSetupModal() {
   const isIncomplete =
     userProfile === null || (!userProfile?.sectorId && !userProfile?.setor);
 
-  if (!user || !isIncomplete) return null;
+  // Enquanto o Auth ainda está inicializando, não exibe nada —
+  // evita flash do modal para usuários que já completaram o perfil.
+  if (loading || !user || !isIncomplete) return null;
 
   const handleSave = async () => {
     if (!sectorId) {
@@ -137,7 +139,7 @@ export default function ProfileSetupModal() {
               >
                 <SelectValue placeholder="Selecione seu setor..." />
               </SelectTrigger>
-              <SelectContent className="z-[10000]">
+              <SelectContent style={{ zIndex: 10000 }}>
                 {sectors.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}

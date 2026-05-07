@@ -113,7 +113,7 @@ export function NavBellMenu({ unreadCount, notifications, notifLoading, markAllR
       </Button>
 
       {open && (
-        <div className="nav-dropdown-menu right-0 left-auto overflow-hidden" style={{ width: "320px", maxHeight: "420px", display: "flex", flexDirection: "column" }}>
+        <div className="nav-dropdown-menu right-0 left-auto overflow-hidden" style={{ width: "min(320px, calc(100vw - 1.5rem))", maxHeight: "420px", display: "flex", flexDirection: "column" }}>
           <div className="px-4 py-3 border-b border-border flex items-center justify-between shrink-0">
             <p className="text-sm font-bold text-foreground">Notificações</p>
             {notifications.length > 0 && <button onClick={markAllRead} className="text-xs text-primary hover:underline">Marcar todas como lidas</button>}

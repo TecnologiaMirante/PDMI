@@ -70,7 +70,9 @@ export async function getAllDatasets(accessToken) {
 
     if (myRes.ok) {
       const { value = [] } = await myRes.json();
-      for (const ds of value) if (ds.name && ds.id) map[ds.name] = ds.id;
+      for (const ds of value)
+        if (ds.name && ds.id)
+          map[ds.name] = { id: ds.id, refreshed: ds.refreshed ?? null };
     }
 
     if (groupsRes.ok) {
@@ -82,7 +84,9 @@ export async function getAllDatasets(accessToken) {
           });
           if (!r.ok) return;
           const { value = [] } = await r.json();
-          for (const ds of value) if (ds.name && ds.id) map[ds.name] = ds.id;
+          for (const ds of value)
+            if (ds.name && ds.id)
+              map[ds.name] = { id: ds.id, refreshed: ds.refreshed ?? null };
         }),
       );
     }
@@ -139,6 +143,41 @@ const DAY_INDEX = {
   Saturday: 6,
 };
 
+// Mapeamento de IDs de timezone Windows → IANA
+// O Power BI armazena o timezone como ID Windows; o JS Intl API usa IANA.
+const WINDOWS_TO_IANA = {
+  "E. South America Standard Time": "America/Sao_Paulo",
+  "SA Eastern Standard Time": "America/Belem",
+  "Bahia Standard Time": "America/Bahia",
+  "Central Brazilian Standard Time": "America/Cuiaba",
+  "Atlantic Standard Time": "America/Halifax",
+  "Eastern Standard Time": "America/New_York",
+  "Central Standard Time": "America/Chicago",
+  "Mountain Standard Time": "America/Denver",
+  "Pacific Standard Time": "America/Los_Angeles",
+  "UTC": "UTC",
+  "Greenwich Standard Time": "UTC",
+  "W. Europe Standard Time": "Europe/Berlin",
+  "Romance Standard Time": "Europe/Paris",
+};
+
+/**
+ * Converte um ID de timezone Windows para IANA.
+ * Se não encontrar mapeamento, tenta usar diretamente (pode ser IANA já).
+ * Fallback final: "America/Sao_Paulo".
+ */
+function resolveTimezone(tzId) {
+  if (!tzId) return "America/Sao_Paulo";
+  if (WINDOWS_TO_IANA[tzId]) return WINDOWS_TO_IANA[tzId];
+  // Testa se o ID já é um IANA válido
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: tzId });
+    return tzId;
+  } catch {
+    return "America/Sao_Paulo";
+  }
+}
+
 /**
  * Calcula o próximo horário agendado de refresh de um dataset.
  * @returns {{ nextRefresh: string|null }} ISO string do próximo refresh, ou null se não houver schedule.
@@ -161,7 +200,7 @@ export async function getDatasetRefreshSchedule(accessToken, datasetId) {
 
   let nextRefresh = null;
   if (schedule.enabled && schedule.days?.length && schedule.times?.length) {
-    const tz = schedule.localTimeZoneId || "UTC";
+    const tz = resolveTimezone(schedule.localTimeZoneId);
     // Data/hora atual no timezone do dataset
     const nowInTz = new Date(
       new Date().toLocaleString("en-US", { timeZone: tz }),

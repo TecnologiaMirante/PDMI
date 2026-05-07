@@ -11,7 +11,7 @@ import {
  * comparando o título do dashboard com o nome do dataset no Power BI.
  *
  * @param {Array} dashboards - Lista de dashboards do Firestore
- * @returns {Object} statusMap — { [titulo]: "loading"|"updated"|"outdated"|"unknown"|"error" }
+ * @returns {Object} statusMap — { [titulo]: { status, lastRefresh, nextRefresh } }
  */
 export function usePowerBIStatuses(dashboards) {
   const [statusMap, setStatusMap] = useState({});
@@ -43,7 +43,7 @@ export function usePowerBIStatuses(dashboards) {
         return;
       }
 
-      // Busca todos os datasets e monta mapa { nome → id }
+      // Busca todos os datasets e monta mapa { nome → { id, refreshed } }
       let datasetsByName = {};
       try {
         datasetsByName = await getAllDatasets(token);
@@ -61,15 +61,17 @@ export function usePowerBIStatuses(dashboards) {
       // Para cada dashboard, tenta encontrar o dataset pelo título
       await Promise.allSettled(
         dashboards.map(async (dash) => {
-          const datasetId = datasetsByName[dash.titulo];
+          const datasetInfo = datasetsByName[dash.titulo];
 
-          if (!datasetId) {
+          if (!datasetInfo) {
             setStatusMap((prev) => ({
               ...prev,
               [dash.titulo]: { status: null, lastRefresh: null },
             }));
             return;
           }
+
+          const { id: datasetId, refreshed: datasetRefreshed } = datasetInfo;
 
           try {
             const [refreshData, scheduleData] = await Promise.all([
@@ -79,28 +81,32 @@ export function usePowerBIStatuses(dashboards) {
               })),
             ]);
 
-            // Ajustar status baseado nas regras
-            let adjustedStatus = refreshData.status;
             const { status, lastRefresh } = refreshData;
             const { nextRefresh } = scheduleData;
 
-            if (status === "updated" && lastRefresh) {
-              // Último refresh foi "Completed" (já que status=updated na função)
+            // Quando o histórico de refreshes está vazio (dataset nunca foi
+            // atualizado via agendador — apenas publicado via Desktop),
+            // usa a data de publicação do dataset como fallback.
+            const effectiveLastRefresh = lastRefresh ?? datasetRefreshed;
+            const effectiveStatus =
+              status === "unknown" && effectiveLastRefresh ? "updated" : status;
+
+            let adjustedStatus = effectiveStatus;
+
+            if (effectiveStatus === "updated" && effectiveLastRefresh) {
               const isRecent =
-                Date.now() - new Date(lastRefresh).getTime() <
+                Date.now() - new Date(effectiveLastRefresh).getTime() <
                 24 * 60 * 60 * 1000;
 
               if (nextRefresh === null) {
-                // Não tem schedule: sempre updated
+                // Sem agendamento: sempre atualizado
                 adjustedStatus = "updated";
               } else {
-                // Tem schedule: updated se recent, outdated se não
                 adjustedStatus = isRecent ? "updated" : "outdated";
               }
-            } else if (status === "outdated" && lastRefresh) {
-              // Último refresh falhou: manter lógica de recência
+            } else if (effectiveStatus === "outdated" && effectiveLastRefresh) {
               const isRecent =
-                Date.now() - new Date(lastRefresh).getTime() <
+                Date.now() - new Date(effectiveLastRefresh).getTime() <
                 24 * 60 * 60 * 1000;
               adjustedStatus = isRecent ? "updated" : "outdated";
             }
@@ -109,7 +115,7 @@ export function usePowerBIStatuses(dashboards) {
               ...prev,
               [dash.titulo]: {
                 status: adjustedStatus,
-                lastRefresh,
+                lastRefresh: effectiveLastRefresh,
                 nextRefresh,
               },
             }));
