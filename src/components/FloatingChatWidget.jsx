@@ -95,12 +95,10 @@ export default function FloatingChatWidget({
   // open → closing (anima saída) → closed (desmonta)
   useEffect(() => {
     if (isOpen) {
-      setPanelState((prev) =>
-        prev === "closed" ? "opening" : prev
-      );
+      setPanelState((prev) => (prev === "closed" ? "opening" : prev));
     } else {
       setPanelState((prev) =>
-        prev === "open" || prev === "opening" ? "closing" : prev
+        prev === "open" || prev === "opening" ? "closing" : prev,
       );
     }
   }, [isOpen]);
@@ -141,14 +139,14 @@ export default function FloatingChatWidget({
     setSnapshotStatus("loading");
 
     const body = {
-      titulo:      dashboard.titulo,              // para auto-descoberta
-      datasetId:   metadata?.datasetId   ?? null,
+      titulo: dashboard.titulo, // para auto-descoberta
+      datasetId: metadata?.datasetId ?? null,
       workspaceId: metadata?.workspaceId ?? null,
-      tables:      metadata?.tables      ?? [],
+      tables: metadata?.tables ?? [],
       modelSchema: {
-        measures:       metadata?.measures       ?? [],
+        measures: metadata?.measures ?? [],
         columnsByTable: metadata?.columnsByTable ?? {},
-        relationships:  metadata?.relationships  ?? [],
+        relationships: metadata?.relationships ?? [],
       },
     };
 
@@ -426,9 +424,11 @@ export default function FloatingChatWidget({
     error: "· erro na leitura",
   }[snapshotStatus];
 
-  const snapshotError = snapshotStatus === "error" || (snapshotText && snapshotText.startsWith("❌")) 
-    ? snapshotText 
-    : null;
+  const snapshotError =
+    snapshotStatus === "error" ||
+    (snapshotText && snapshotText.startsWith("❌"))
+      ? snapshotText
+      : null;
 
   const mdComponents = {
     h1: ({ children }) => (
@@ -486,10 +486,14 @@ export default function FloatingChatWidget({
       {panelState === "closed" && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 left-4 z-50 flex items-center gap-1.5 bg-primary text-primary-foreground pl-1.5 pr-3 py-1.5 rounded-full shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200"
+          className="fixed bottom-5 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex items-center gap-1.5 bg-primary text-primary-foreground pl-1.5 pr-3 py-1.5 rounded-full shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transition-all duration-200 cursor-pointer animate-in fade-in zoom-in-95 slide-in-from-bottom-3 duration-200"
           aria-label="Abrir Analista BI"
         >
-          <img src={iconMara} alt="Mara" className="size-6 object-cover rounded-full shrink-0" />
+          <img
+            src={iconMara}
+            alt="Mara"
+            className="size-7 object-cover rounded-full shrink-0"
+          />
           <span className="text-xs font-semibold">Analista BI</span>
         </button>
       )}
@@ -505,7 +509,7 @@ export default function FloatingChatWidget({
               setIsExpanded(false);
             }
           }}
-          className={`fixed bottom-0 left-0 z-50 flex flex-col w-full sm:bottom-5 sm:left-4 sm:w-auto bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden origin-bottom-left chat-resize
+          className={`fixed bottom-0 left-0 z-50 flex flex-col w-full sm:bottom-6 sm:left-auto sm:right-6 bg-card border border-border/60 rounded-t-2xl sm:rounded-2xl shadow-2xl shadow-black/20 overflow-hidden origin-bottom-left sm:origin-bottom-right chat-resize
             ${panelState === "opening" ? "chat-enter" : ""}
             ${panelState === "closing" ? "chat-exit" : ""}
             ${panelSize}`}
@@ -516,7 +520,11 @@ export default function FloatingChatWidget({
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
 
             <div className="w-8 h-8 rounded-full ring-1 ring-white/20 shrink-0 overflow-hidden">
-              <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
+              <img
+                src={iconMara}
+                alt="Mara"
+                className="w-full h-full object-cover"
+              />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -616,7 +624,11 @@ export default function FloatingChatWidget({
                     <div key={i} className="flex justify-center pt-2 pb-1">
                       <div className="max-w-[88%] flex flex-col items-center gap-2 bg-muted/50 border border-border/60 rounded-2xl px-5 py-4 text-center shadow-sm">
                         <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-primary/20">
-                          <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
+                          <img
+                            src={iconMara}
+                            alt="Mara"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {msg.content}
@@ -641,7 +653,11 @@ export default function FloatingChatWidget({
                         }`}
                       >
                         {isAssistant ? (
-                          <img src={iconMara} alt="Mara" className="w-full h-full object-cover" />
+                          <img
+                            src={iconMara}
+                            alt="Mara"
+                            className="w-full h-full object-cover"
+                          />
                         ) : user?.picture ? (
                           <img
                             src={user.picture}
@@ -776,7 +792,9 @@ export default function FloatingChatWidget({
               <Button
                 size="icon"
                 onClick={sendMessage}
-                disabled={!input.trim() || isStreaming || snapshotStatus === "loading"}
+                disabled={
+                  !input.trim() || isStreaming || snapshotStatus === "loading"
+                }
                 className="shrink-0 rounded-xl w-10 h-10 shadow-sm"
                 aria-label="Enviar mensagem"
               >
@@ -796,7 +814,8 @@ export default function FloatingChatWidget({
                 </span>
               ) : snapshotStatus === "error" ? (
                 <span className="text-muted-foreground/60">
-                  Sem dados em tempo real · Enter para enviar · Shift+Enter para nova linha
+                  Sem dados em tempo real · Enter para enviar · Shift+Enter para
+                  nova linha
                 </span>
               ) : (
                 <span className="text-muted-foreground/60">
