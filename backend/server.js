@@ -255,13 +255,18 @@ async function checkPowerBIApi() {
       }).toString(),
       signal: AbortSignal.timeout(4000),
     });
-    if (!res.ok) throw new Error(`Token PBI falhou: ${res.status}`);
     const ms = Date.now() - t0;
+    if (res.status === 400) {
+      let oauthError = "";
+      try { oauthError = (await res.json()).error ?? ""; } catch { /* ignore */ }
+      if (oauthError === "invalid_grant")  return { status: "unhealthy", responseTimeMs: ms, message: "Senha ou usuário inválidos" };
+      if (oauthError === "invalid_client") return { status: "unhealthy", responseTimeMs: ms, message: "Client ID ou Secret inválidos" };
+      return { status: "healthy", responseTimeMs: ms, message: "Verificação limitada pela Microsoft" };
+    }
+    if (!res.ok) return { status: "unhealthy", responseTimeMs: ms, message: res.status === 401 ? "Credenciais inválidas" : `HTTP ${res.status}` };
     return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
   } catch (err) {
     const ms = Date.now() - t0;
-    if (err.message?.includes("400")) return { status: "healthy",   responseTimeMs: ms, message: "Verificação limitada pela Microsoft" };
-    if (err.message?.includes("401")) return { status: "unhealthy", responseTimeMs: ms, message: "Credenciais inválidas" };
     return { status: "unhealthy", responseTimeMs: ms, message: err.message };
   }
 }
