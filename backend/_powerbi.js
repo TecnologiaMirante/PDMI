@@ -7,8 +7,14 @@
 const PBI_API = "https://api.powerbi.com/v1.0/myorg";
 
 // ── Token ─────────────────────────────────────────────────────────────────────
+// Token is cached for 50 min (Microsoft issues tokens valid for 60 min).
+// This avoids repeated ROPC OAuth calls that trigger rate-limiting.
+
+let _tokenCache = null; // { token: string, expiresAt: number }
 
 export async function getPBIToken() {
+  if (_tokenCache && Date.now() < _tokenCache.expiresAt) return _tokenCache.token;
+
   const res = await fetch(process.env.VITE_PBI_PROXY_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -22,7 +28,9 @@ export async function getPBIToken() {
     }).toString(),
   });
   if (!res.ok) throw new Error(`Token PBI falhou: ${res.status}`);
-  const { access_token } = await res.json();
+  const { access_token, expires_in } = await res.json();
+  const ttlMs = ((expires_in ?? 3600) - 300) * 1000; // 5 min de margem
+  _tokenCache = { token: access_token, expiresAt: Date.now() + ttlMs };
   return access_token;
 }
 
