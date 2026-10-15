@@ -238,31 +238,17 @@ async function checkAnthropicApi() {
 }
 
 async function checkPowerBIApi() {
-  const proxyUrl = process.env.VITE_PBI_PROXY_URL;
-  if (!proxyUrl) return { status: "unhealthy", message: "VITE_PBI_PROXY_URL não configurada" };
+  if (!process.env.VITE_PBI_PROXY_URL) return { status: "unhealthy", message: "VITE_PBI_PROXY_URL não configurada" };
   const t0 = Date.now();
   try {
-    const res = await fetch(proxyUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "password",
-        scope: "https://analysis.windows.net/powerbi/api/.default",
-        client_id: process.env.VITE_PBI_CLIENT_ID ?? "",
-        username: process.env.VITE_PBI_USERNAME ?? "",
-        password: process.env.VITE_PBI_PASSWORD ?? "",
-        client_secret: process.env.VITE_PBI_CLIENT_SECRET ?? "",
-      }).toString(),
-      signal: AbortSignal.timeout(4000),
-    });
+    await Promise.race([
+      getPBIToken(),
+      new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("Timeout após 4s"), { name: "TimeoutError" })), 4000)),
+    ]);
     const ms = Date.now() - t0;
-    if (!res.ok) return { status: "unhealthy", responseTimeMs: ms, message: `HTTP ${res.status}` };
-    const { access_token } = await res.json();
-    if (!access_token) return { status: "unhealthy", responseTimeMs: ms, message: "Token não retornado" };
     return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
   } catch (err) {
     const ms = Date.now() - t0;
-    if (err.name === "TimeoutError") return { status: "unhealthy", responseTimeMs: ms, message: "Timeout após 4s" };
     return { status: "unhealthy", responseTimeMs: ms, message: err.message };
   }
 }
