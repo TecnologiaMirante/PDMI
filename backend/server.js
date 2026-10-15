@@ -238,36 +238,47 @@ async function checkAnthropicApi() {
 }
 
 async function checkPowerBIApi() {
-  if (!process.env.VITE_PBI_PROXY_URL) return { status: "unhealthy", message: "VITE_PBI_PROXY_URL não configurada" };
+  const tenantId = process.env.VITE_PBI_TENANT_ID;
+  if (!tenantId) return { status: "unhealthy", message: "VITE_PBI_TENANT_ID não configurada" };
   const t0 = Date.now();
   try {
-    // Sempre valida credenciais frescas — não usa o cache do fluxo normal.
-    const res = await fetch(process.env.VITE_PBI_PROXY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type:    "password",
-        scope:         "https://analysis.windows.net/powerbi/api/.default",
-        client_id:     process.env.VITE_PBI_CLIENT_ID,
-        username:      process.env.VITE_PBI_USERNAME,
-        password:      process.env.VITE_PBI_PASSWORD,
-        client_secret: process.env.VITE_PBI_CLIENT_SECRET,
-      }).toString(),
-      signal: AbortSignal.timeout(4000),
-    });
-    const ms = Date.now() - t0;
-    if (res.status === 400) {
-      let oauthError = "";
-      try { oauthError = (await res.json()).error ?? ""; } catch { /* ignore */ }
-      if (oauthError === "invalid_grant")  return { status: "unhealthy", responseTimeMs: ms, message: "Senha ou usuário inválidos" };
-      if (oauthError === "invalid_client") return { status: "unhealthy", responseTimeMs: ms, message: "Client ID ou Secret inválidos" };
-      return { status: "healthy", responseTimeMs: ms, message: "Verificação limitada pela Microsoft" };
+    const tokenRes = await fetch(
+      `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type:    "password",
+          scope:         "https://analysis.windows.net/powerbi/api/.default",
+          client_id:     process.env.VITE_PBI_CLIENT_ID,
+          client_secret: process.env.VITE_PBI_CLIENT_SECRET,
+          username:      process.env.VITE_PBI_USERNAME,
+          password:      process.env.VITE_PBI_PASSWORD,
+        }).toString(),
+        signal: AbortSignal.timeout(10000),
+      }
+    );
+    const tokenData = await tokenRes.json();
+
+    if (tokenRes.status === 200) {
+      const apiRes = await fetch("https://api.powerbi.com/v1.0/myorg/groups", {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+        signal: AbortSignal.timeout(8000),
+      });
+      const ms = Date.now() - t0;
+      if (apiRes.status === 200) return { status: "healthy", responseTimeMs: ms };
+      return { status: "unhealthy", responseTimeMs: ms, message: `API retornou HTTP ${apiRes.status}` };
     }
-    if (!res.ok) return { status: "unhealthy", responseTimeMs: ms, message: res.status === 401 ? "Credenciais inválidas" : `HTTP ${res.status}` };
-    return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
-  } catch (err) {
+
     const ms = Date.now() - t0;
-    return { status: "unhealthy", responseTimeMs: ms, message: err.message };
+    const errorCode = tokenData?.error ?? "erro desconhecido";
+    if (errorCode === "invalid_grant" || errorCode === "invalid_client") {
+      return { status: "unhealthy", responseTimeMs: ms, message: "Credenciais inválidas" };
+    }
+    return { status: "degraded", responseTimeMs: ms, message: `Verificação limitada pela Microsoft (${errorCode})` };
+
+  } catch (err) {
+    return { status: "unhealthy", responseTimeMs: Date.now() - t0, message: err.message };
   }
 }
 
