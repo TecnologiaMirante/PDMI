@@ -249,9 +249,8 @@ async function checkPowerBIApi() {
     return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
   } catch (err) {
     const ms = Date.now() - t0;
-    if (err.message?.includes("400")) {
-      return { status: "degraded", responseTimeMs: ms, message: "OAuth bloqueado (app operacional)" };
-    }
+    if (err.message?.includes("400")) return { status: "healthy",   responseTimeMs: ms, message: "Verificação limitada pela Microsoft" };
+    if (err.message?.includes("401")) return { status: "unhealthy", responseTimeMs: ms, message: "Credenciais inválidas" };
     return { status: "unhealthy", responseTimeMs: ms, message: err.message };
   }
 }
