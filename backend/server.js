@@ -202,8 +202,97 @@ const TOOLS = [
 
 // ── GET /health ───────────────────────────────────────────────────────────────
 
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+const APP_VERSION = (() => {
+  try { return JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf8")).version; }
+  catch { return "unknown"; }
+})();
+
+async function checkFirestore() {
+  if (!db) return { status: "unhealthy", message: "Firestore não configurado" };
+  const t0 = Date.now();
+  try {
+    await db.collection("_health").limit(1).get();
+    return { status: "healthy", responseTimeMs: Date.now() - t0 };
+  } catch (err) {
+    return { status: "unhealthy", responseTimeMs: Date.now() - t0, message: err.message };
+  }
+}
+
+async function checkAnthropicApi() {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return { status: "unhealthy", message: "ANTHROPIC_API_KEY não configurada" };
+  const t0 = Date.now();
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/models", {
+      headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+      signal: AbortSignal.timeout(4000),
+    });
+    const ms = Date.now() - t0;
+    if (!res.ok) return { status: "unhealthy", responseTimeMs: ms, message: `HTTP ${res.status}` };
+    return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
+  } catch (err) {
+    const ms = Date.now() - t0;
+    if (err.name === "TimeoutError") return { status: "unhealthy", responseTimeMs: ms, message: "Timeout após 4s" };
+    return { status: "unhealthy", responseTimeMs: ms, message: err.message };
+  }
+}
+
+async function checkPowerBIApi() {
+  const proxyUrl = process.env.VITE_PBI_PROXY_URL;
+  if (!proxyUrl) return { status: "unhealthy", message: "VITE_PBI_PROXY_URL não configurada" };
+  const t0 = Date.now();
+  try {
+    const res = await fetch(proxyUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "password",
+        scope: "https://analysis.windows.net/powerbi/api/.default",
+        client_id: process.env.VITE_PBI_CLIENT_ID ?? "",
+        username: process.env.VITE_PBI_USERNAME ?? "",
+        password: process.env.VITE_PBI_PASSWORD ?? "",
+        client_secret: process.env.VITE_PBI_CLIENT_SECRET ?? "",
+      }).toString(),
+      signal: AbortSignal.timeout(4000),
+    });
+    const ms = Date.now() - t0;
+    if (!res.ok) return { status: "unhealthy", responseTimeMs: ms, message: `HTTP ${res.status}` };
+    const { access_token } = await res.json();
+    if (!access_token) return { status: "unhealthy", responseTimeMs: ms, message: "Token não retornado" };
+    return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
+  } catch (err) {
+    const ms = Date.now() - t0;
+    if (err.name === "TimeoutError") return { status: "unhealthy", responseTimeMs: ms, message: "Timeout após 4s" };
+    return { status: "unhealthy", responseTimeMs: ms, message: err.message };
+  }
+}
+
+app.get("/health", async (_req, res) => {
+  const [firestoreCheck, anthropicCheck, powerBiCheck] = await Promise.all([
+    checkFirestore(),
+    checkAnthropicApi(),
+    checkPowerBIApi(),
+  ]);
+
+  const checks = {
+    database: firestoreCheck,
+    anthropicApi: anthropicCheck,
+    powerBiApi: powerBiCheck,
+  };
+
+  const statuses = Object.values(checks).map((c) => c.status);
+  const globalStatus = statuses.includes("unhealthy")
+    ? "unhealthy"
+    : statuses.includes("degraded")
+    ? "degraded"
+    : "healthy";
+
+  res.status(globalStatus === "unhealthy" ? 503 : 200).json({
+    status: globalStatus,
+    version: APP_VERSION,
+    timestamp: new Date().toISOString(),
+    checks,
+  });
 });
 
 // ── POST /api/snapshot ────────────────────────────────────────────────────────
