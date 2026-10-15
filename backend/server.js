@@ -249,6 +249,9 @@ async function checkPowerBIApi() {
     return { status: ms > 2000 ? "degraded" : "healthy", responseTimeMs: ms, ...(ms > 2000 ? { message: "Latência elevada" } : {}) };
   } catch (err) {
     const ms = Date.now() - t0;
+    if (err.message?.includes("400")) {
+      return { status: "degraded", responseTimeMs: ms, message: "OAuth bloqueado (app operacional)" };
+    }
     return { status: "unhealthy", responseTimeMs: ms, message: err.message };
   }
 }
