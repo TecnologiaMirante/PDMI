@@ -7,7 +7,7 @@ export default async function handler(_req, res) {
   if (!backendUrl) {
     return res.status(503).json({
       status: "unhealthy",
-      version: "unknown",
+      version: "1.0.0",
       timestamp: new Date().toISOString(),
       checks: {
         backend: {
@@ -45,7 +45,7 @@ export default async function handler(_req, res) {
 
     return res.status(globalStatus === "unhealthy" ? 503 : 200).json({
       status: globalStatus,
-      version: body.version ?? "unknown",
+      version: body.version ?? "1.0.0",
       timestamp: new Date().toISOString(),
       checks,
     });
@@ -54,7 +54,7 @@ export default async function handler(_req, res) {
     const timedOut = err.name === "TimeoutError";
     return res.status(503).json({
       status: "unhealthy",
-      version: "unknown",
+      version: "1.0.0",
       timestamp: new Date().toISOString(),
       checks: {
         backend: {
