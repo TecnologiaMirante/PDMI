@@ -29,9 +29,9 @@ export default async function handler(_req, res) {
     // Injeta o check de conectividade com o próprio backend
     const checks = {
       backend: {
-        status: ms > 2000 ? "degraded" : "healthy",
+        status: ms > 5000 ? "degraded" : "healthy",
         responseTimeMs: ms,
-        ...(ms > 2000 ? { message: "Latência elevada com o backend" } : {}),
+        ...(ms > 5000 ? { message: "Latência elevada com o backend" } : {}),
       },
       ...body.checks,
     };
