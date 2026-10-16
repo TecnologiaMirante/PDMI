@@ -170,8 +170,18 @@ async function loadKnowledge(dashboardId = null) {
   return knowledge;
 }
 
-// CORS: em produção, configurar CORS_ORIGIN com a URL do frontend no Render
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:5173" }));
+// CORS: em produção, configurar CORS_ORIGIN com a(s) URL(s) do frontend
+// Aceita múltiplas origens separadas por vírgula: "https://pdmi.onrender.com"
+const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS bloqueado: ${origin}`));
+  },
+}));
 app.use(express.json());
 
 // ── Ferramentas disponíveis para o Claude (tool_use) ─────────────────────────

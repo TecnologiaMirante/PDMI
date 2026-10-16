@@ -59,12 +59,9 @@ O back-office exclusivo (Área do Admin) permite aos gestores visualizarem quem 
 - 💾 **Prompt Cache:** System prompt com cache em múltiplos blocos (`ephemeral`) — persona, knowledge e snapshot separados para máxima reutilização de cache da Anthropic.
 - 🔁 **Retry com Backoff:** Rate limit 429 tratado com retry exponencial automático (até 3 tentativas, limite 16s).
 
-### Sistema de Knowledge
-- 📂 **Extração automática do .pbip:** Script lê os arquivos TMDL (`.SemanticModel`) e as páginas do relatório (`.Report`) e gera um `.knowledge.json` estruturado por dashboard.
-- ✅ **Auditoria:** Script detecta contagens suspeitas (colunas, medidas, tabelas) e interrompe o pipeline antes de publicar dados incorretos.
-- ☁️ **Publicação no Firestore:** Knowledge publicado em `dashboard_knowledge/{dashboardId}` — atualizações não exigem commit, push ou redeploy do backend.
-- 🔄 **Pipeline de sincronização:** Script PowerShell (`sync-and-publish-knowledge.ps1`) orquestra extração → auditoria → publicação com confirmação interativa antes de escrever em produção.
-- ⏱️ **Cache TTL no backend:** Knowledge lido do Firestore fica em cache por 5 minutos (configurável via `KNOWLEDGE_TTL_MS`) para evitar leituras excessivas a cada requisição de chat.
+### Observabilidade
+- 🩺 **Health Check detalhado:** O endpoint `/health` reporta o status de cada dependência interna — `backend`, `database`, `anthropicApi` e `powerBiApi` — com tempo de resposta individual. Consumido pelo MiraTech Monitor para alertas automáticos.
+- 🔑 **Detecção de credencial inválida no Power BI:** O health check obtém um token OAuth diretamente do Microsoft (sem cache) e em seguida faz uma chamada real à API do Power BI. Se as credenciais estiverem incorretas → `unhealthy`; se a Microsoft bloquear a chamada isolada → `degraded`.
 
 ---
 
@@ -97,7 +94,7 @@ O back-office exclusivo (Área do Admin) permite aos gestores visualizarem quem 
 ```
 📦 PDMI
  ┣ 📂 backend/                    # Servidor Node.js (ESM)
- ┃ ┣ 📜 server.js                 # /api/chat (streaming IA) + /api/snapshot
+ ┃ ┣ 📜 server.js                 # /api/chat (streaming IA) + /api/snapshot + /health
  ┃ ┣ 📜 _powerbi.js               # executeQueries, snapshot, DAX dinâmico
  ┃ ┣ 📜 _buildPrompt.js           # System prompt + knowledge context
  ┃ ┗ 📜 package.json
@@ -145,6 +142,33 @@ via SSE (palavra por palavra)          Gera DAX por template
                                        Resultado → 2ª chamada Claude
                                        Resposta streamada ao frontend
 ```
+
+### Fluxo do Health Check
+
+```
+MiraTech Monitor
+       ↓
+GET https://pdmi-backend.onrender.com/health   ← Render Express (server.js)
+       ↓  retorna JSON:
+{
+  status: "healthy" | "degraded" | "unhealthy",
+  version: "1.0.0",
+  checks: {
+    backend:     { status, responseTimeMs },
+    database:    { status, responseTimeMs },
+    anthropicApi:{ status, responseTimeMs },
+    powerBiApi:  { status, responseTimeMs, message? }
+  }
+}
+```
+
+**Lógica do `powerBiApi`:**
+1. Chama Microsoft OAuth diretamente (`/oauth2/v2.0/token`) sem cache, usando `VITE_PBI_TENANT_ID`
+2. Se o token é obtido (200) → chama `GET /v1.0/myorg/groups` para verificar as credenciais
+3. Se a chamada à API retorna 200 → `healthy`
+4. Se a chamada retorna outro código → `unhealthy` com o status HTTP
+5. Se o OAuth retorna 400 com `invalid_grant` ou `invalid_client` → `unhealthy` ("Credenciais inválidas")
+6. Se o OAuth retorna 400 por bloqueio da Microsoft → `degraded` com o código de erro
 
 ### Controle de Acesso
 
@@ -206,9 +230,12 @@ VITE_BACKEND_URL=http://localhost:3001   # URL do backend em dev
 ANTHROPIC_API_KEY=sk-ant-...
 
 # Power BI
-POWERBI_CLIENT_ID=...
-POWERBI_CLIENT_SECRET=...
-POWERBI_TENANT_ID=...
+VITE_PBI_CLIENT_ID=...
+VITE_PBI_CLIENT_SECRET=...
+VITE_PBI_USERNAME=...
+VITE_PBI_PASSWORD=...
+VITE_PBI_TENANT_ID=...          # ID do diretório (locatário) no Azure AD
+VITE_PBI_PROXY_URL=...          # URL do proxy Vercel para token PBI
 
 # Firebase Admin (escolha uma estratégia)
 FIREBASE_SERVICE_ACCOUNT_PATH=./serviceAccount.json   # dev local
@@ -216,9 +243,11 @@ FIREBASE_SERVICE_ACCOUNT_PATH=./serviceAccount.json   # dev local
 
 # Servidor
 PORT=3001
-CORS_ORIGIN=http://localhost:5173   # em produção: URL do frontend no Render
+CORS_ORIGIN=http://localhost:5173   # em produção: URL do frontend
 KNOWLEDGE_TTL_MS=300000             # TTL do cache de knowledge (padrão: 5 min)
 ```
+
+> **Onde encontrar o `VITE_PBI_TENANT_ID`:** Portal Azure → Azure Active Directory → Visão geral → "ID do diretório (locatário)".
 
 ### 3. Rode em desenvolvimento
 
@@ -248,8 +277,23 @@ O pipeline faz: **extração** → **auditoria** → **publicação no Firestore
 
 ### 5. Deploy
 
-- **Frontend:** qualquer plataforma SPA (Render, Vercel, Netlify). O arquivo `public/_redirects` garante que o React Router funcione com F5.
-- **Backend:** Render (Web Service, `Root Directory = backend`, `Start Command = node server.js`). Configure as variáveis de ambiente no painel do Render, especialmente `FIREBASE_SERVICE_ACCOUNT_BASE64`.
+- **Frontend:** qualquer plataforma SPA (Render, Netlify). O arquivo `public/_redirects` garante que o React Router funcione com F5.
+- **Backend:** Render (Web Service, `Root Directory = backend`, `Start Command = node server.js`). Configure as variáveis de ambiente no painel do Render.
+- **Health Check (MiraTech Monitor):** aponta diretamente para `https://pdmi-backend.onrender.com/health`.
+
+**Variáveis obrigatórias no Render:**
+
+| Variável | Descrição |
+|---|---|
+| `ANTHROPIC_API_KEY` | Chave da API Anthropic (Claude) |
+| `VITE_PBI_PROXY_URL` | URL do proxy Vercel para token PBI |
+| `VITE_PBI_CLIENT_ID` | Client ID do app Azure |
+| `VITE_PBI_CLIENT_SECRET` | Client Secret do app Azure |
+| `VITE_PBI_USERNAME` | Usuário da conta de serviço PBI |
+| `VITE_PBI_PASSWORD` | Senha da conta de serviço PBI |
+| `VITE_PBI_TENANT_ID` | ID do locatário Azure AD (usado no health check direto) |
+| `FIREBASE_SERVICE_ACCOUNT_BASE64` | Service account do Firebase em base64 |
+| `CORS_ORIGIN` | URL do frontend em produção |
 
 Para gerar o base64 do serviceAccount:
 ```powershell
@@ -260,6 +304,12 @@ Para gerar o base64 do serviceAccount:
 
 ## 📋 Changelog
 
+### v3.x — Outubro 2026
+
+| Feature | Descrição |
+|---|---|
+| 🩺 **Health Check detalhado** | `/health` retorna status individual de `backend`, `database`, `anthropicApi` e `powerBiApi` com tempo de resposta — consumido pelo MiraTech Monitor |
+| 🔑 **Detecção de credencial inválida (Power BI)** | Health check faz OAuth direto (sem cache) e chamada real à API do Power BI — credencial errada gera `unhealthy` no monitor |
 ### v3.x — Maio 2026
 
 | Feature | Descrição |
