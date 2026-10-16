@@ -293,6 +293,7 @@ async function checkPowerBIApi() {
 }
 
 app.get("/health", async (_req, res) => {
+  const t0 = Date.now();
   const [firestoreCheck, anthropicCheck, powerBiCheck] = await Promise.all([
     checkFirestore(),
     checkAnthropicApi(),
@@ -300,6 +301,7 @@ app.get("/health", async (_req, res) => {
   ]);
 
   const checks = {
+    backend: { status: "healthy", responseTimeMs: Date.now() - t0 },
     database: firestoreCheck,
     anthropicApi: anthropicCheck,
     powerBiApi: powerBiCheck,
